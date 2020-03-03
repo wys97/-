@@ -1,0 +1,45 @@
+.logo {
+  max-width: 340px;
+  height: 42px;
+  line-height: 42px;
+  background: #fff;
+  padding: 0 10px 0 0;
+  margin-left: 10px;
+  border-radius: 20px;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  img {
+    width: 42px;
+    height: 42px;
+    border-radius: 20px;
+  }
+  .logo-text {
+    display: inline-block;
+    line-height: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    color: #666666;
+    font-family: Helvetica, sans-serif;
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .logo {
+    width: 80px;
+    .logo-text {
+      font-size: 22px;
+    }
+  }
+}
+
+@media screen and (min-width: 1200px) and (max-width: 1440px) {
+  .logo {
+    max-width: 340px;
+    .logo-text {
+      font-size: 13px;
+    }
+  }
+}

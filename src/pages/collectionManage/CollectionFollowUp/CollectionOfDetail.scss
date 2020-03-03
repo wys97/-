@@ -1,0 +1,15 @@
+@charset "UTF-8";
+
+.collection {
+  .container-block {
+    .next-table-body {
+      td {
+        .next-table-cell-wrapper {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-height: 85px;
+        }
+      }
+    }
+  }
+}

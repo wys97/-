@@ -1,0 +1,199 @@
+/* GLOBAL */
+
+html,
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+.ice-design-layout-dark {
+  &.ice-design-layout {
+    background-color: #2e323f;
+    min-height: 100vh;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  .ice-layout {
+    padding: 0;
+    background: transparent;
+  }
+
+  .ice-layout-main {
+    position: relative;
+    padding: 5px 5px 0 10px;
+    background-color: #f0f2f5;
+    width: calc(100% - 200px);
+
+    .container-block {
+      margin-bottom: 15px !important;
+      border-radius: 3px !important;
+    }
+
+    .icon-btn {
+      top: 4px;
+      padding-left: 0;
+      padding-right: 0;
+      z-index: 1;
+      background-color: #fff;
+      color: #999;
+
+      &.left-btn {
+        position: absolute;
+        left: 25px;
+      }
+
+      &.right-btn {
+        position: absolute;
+        right: 10px;
+      }
+
+      .next-icon {
+        &:before {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .indexTabDiv {
+      overflow: hidden;
+      white-space: nowrap;
+      border-radius: 3px;
+      background-color: #FFF;
+      height: auto;
+      line-height: 41px;
+      margin-bottom: 15px;
+
+      .custom-tab {
+        .next-tabs-bar {
+          .next-tabs-nav {
+            height: 45px;
+
+            .next-tabs-tab {
+              margin: 8px;
+              height: 30px;
+              padding: 5px 15px;
+              line-height: 20px;
+              border-radius: 3px;
+              background-color: rgba(247, 248, 250, 1);
+              color: rgba(102, 102, 102, 1);
+              font-size: 12px;
+              text-align: center;
+              font-family: Roboto;
+              border: none;
+              border: 1px solid #f7f8fa;
+
+              &.active,
+              &:hover {
+                background-color: rgba(255, 255, 255, 1);
+                color: rgba(84, 129, 255, 1);
+                border: 1px solid rgba(84, 129, 255, 1);
+
+                .next-tabs-tab-close {
+                  color: rgba(84, 129, 255, 1);
+                }
+              }
+
+              .next-tabs-tab-inner {
+                height: 30px;
+                padding: 0;
+                line-height: 20px;
+
+                .next-tabs-tab-close {
+                  &:focus {
+                    outline: none;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .indexTab {
+        overflow: hidden;
+
+        .next-breadcrumb {
+          width: fit-content;
+          overflow: hidden;
+          white-space: nowrap;
+          position: relative;
+          margin: 0;
+          height: 100%;
+          line-height: 100%;
+          min-width: 100%;
+
+          .next-breadcrumb-item {
+            height: 100%;
+            line-height: 100%;
+
+            .next-breadcrumb-separator {
+              display: none;
+            }
+
+            .next-breadcrumb-text {
+              height: 30px;
+              padding: 7px 15px;
+              font-size: 12px;
+              margin: 5px;
+              background-color: #F6F7F9;
+              border: 1px solid #F6F7F9;
+              border-radius: 3px;
+              vertical-align: center;
+
+              .next-icon {
+                &.next-icon-close {
+                  &:before {
+                    font-size: 12px;
+                  }
+                }
+              }
+
+              &.activated {
+                color: #4F7DF8;
+                border: 1px solid #4F7DF8;
+                padding: 6px 15px 8px;
+              }
+
+              &:hover {
+                color: #4F7DF8;
+                border: 1px solid #4F7DF8;
+                padding: 6px 15px 8px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .main-content {
+      overflow: auto;
+      height: calc(100% - 62px);
+      padding-right: 5px;
+      position: relative;
+    }
+  }
+
+  .ice-layout-section {
+  }
+}
+
+.ice-design-boxed-layout {
+  .ice-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+.ice-design-fluid-layout {
+  .ice-layout {
+    width: 100%;
+  }
+}
+
+.column-form.detail-form {
+  .next-form-item.next-medium {
+    min-height: 28px;
+    height: auto !important;
+  }
+}

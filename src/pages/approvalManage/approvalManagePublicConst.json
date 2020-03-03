@@ -1,0 +1,16 @@
+{
+  "approvalStatus": [
+    {
+      "key": "待审批",
+      "value": "APPROVING"
+    },
+    {
+      "key": "通过",
+      "value": "PASS"
+    },
+    {
+      "key": "拒绝",
+      "value": "FAILED"
+    }
+  ]
+}

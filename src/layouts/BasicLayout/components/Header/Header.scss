@@ -1,0 +1,122 @@
+/* HEADER */
+.ice-design-layout-header {
+  width: 100%;
+  padding: 10px 0;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: none;
+  background: transparent;
+  .user-avatar {
+    margin-right: 12px;
+    border-radius: 3px;
+  }
+  .ice-design-layout-header-menu {
+    display: flex;
+    width: calc(100% - 200px);
+    .next-nav {
+      width: calc(100% - 160px);
+      line-height: 30px;
+
+      .next-menu-item-inner {
+        height: 30px;
+      }
+    }
+    .ice-menu {
+      background: transparent;
+      color: #fff;
+      .ice-menu-item:hover,
+      .ice-menu-item > a:hover {
+        color: $color-brand1-6;
+      }
+    }
+  }
+  .warning {
+    padding: 10px 0;
+  }
+  .whiteIcon {
+    color: #fff;
+    margin: auto 5px auto 0;
+    &.act{
+      height: 16px;
+    }
+  }
+  .ice-design-header-userpannel {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    margin-left: 10px;
+    cursor: pointer;
+    line-height: 100%;
+    .user-profile {
+      display: inline-block;
+      text-align: center;
+      margin-bottom: 2px;
+      color: #fff;
+      .user-name {
+        font-size: 13px;
+      }
+      .user-department {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+    .icon-down {
+      margin-left: 2px;
+      color: #fff;
+    }
+  }
+
+  .next-nav {
+    background: transparent;
+    .next-nav-item.next-menu-item {
+      background: transparent;
+      padding: 0 10px;
+      margin: 10px;
+      border-radius: 3px;
+      &:hover {
+        background: #5584FF;
+      }
+
+      &.choose {
+        background: #5584FF;
+      }
+    }
+  }
+}
+
+.user-profile-menu {
+  width: 130px;
+  border-radius: 3px;
+  padding: 0 16px;
+  .user-profile-menu-item {
+    cursor: pointer;
+    height: 40px;
+    line-height: 40px;
+    font-size: 12px;
+    color: #666;
+    i {
+      margin-right: 5px;
+    }
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .ice-layout-theme-dark {
+    &.ice-design-layout-header {
+      width: 100%;
+      .user-avatar {
+        margin-left: 4px;
+      }
+      .ice-design-header-userpannel {
+        margin-left: 0;
+      }
+      .ice-design-layout-header-menu {
+        .ice-menu .ice-menu-item {
+          padding: 0 5px;
+        }
+      }
+    }
+  }
+}
