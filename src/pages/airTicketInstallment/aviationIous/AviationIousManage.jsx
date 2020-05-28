@@ -55,7 +55,7 @@ export default class AviationIousManage extends Component {
         name: '修改',
         type: 'edit',
         key: 'status',
-        value: 'ENABLED',
+        value: 'DISABLED',
       permission: 'business:white-strip:entrance:save'
     },
     {

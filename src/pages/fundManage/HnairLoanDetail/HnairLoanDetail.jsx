@@ -91,7 +91,7 @@ export default class HnairLoanDetail extends Component {
       name: "导出",
       type: "export",
       icon: "export",
-      permission: "finance:day-settle:day-settle:export"
+      permission: "loanbusiness:loan:loan:menu"
     }
   ];
 

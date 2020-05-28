@@ -87,6 +87,11 @@ export default class MessagePushList extends Component {
       width: 200,
     },
     {
+      label: '消息内容',
+      key: 'content',
+      type: '',
+    },
+    {
       title: "推送平台",
       key: "platformText",
       width: 80,

@@ -87,6 +87,16 @@ export const refundFormValue = value => {
     value
   }
 }
+/**
+ * 生成 REFUND_FORMVALUE 动作的函数
+ * @param {String} value 还款借据明细-筛查参数与页码 
+ */
+export const debtFormValue = value => {
+  return {
+    type: constants.DEBT_FORMVALUE,
+    value
+  }
+}
 
 /**
  * 生成 OVERDUE_FORMVALUE 动作的函数
@@ -142,6 +152,16 @@ export const feeWaiver = value => {
     value
   }
 }
+/**
+ * 生成 FEEWAIVER_FORMVALUE 动作的函数
+ * @param {String} value 展期-筛查参数与页码 
+ */
+export const postpone = value => {
+  return {
+    type: constants.POSTPONE_FORMVALUE,
+    value
+  }
+}
 
 /**
  * 生成 INIT_IALIZE 动作的函数
@@ -153,3 +173,4 @@ export const initialize = path => {
     path
   }
 }
+

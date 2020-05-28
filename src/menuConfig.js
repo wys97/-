@@ -142,6 +142,11 @@ const asideMenuConfig = [
           authority: "workbench:approval:offline-repay:menu"
         },
         {
+          name: "展期审批",
+          path: "/approvalManage/postponeApprove",
+          authority: "workbench:approval:offline-repay:menu"
+        },
+        {
           name: "息费调整审批",
           path: "/approvalManage/feeWaiver",
           authority: "workbench:approval:decrease-interest:menu"
@@ -276,6 +281,11 @@ const asideMenuConfig = [
           name: "还款明细",
           path: "/fundManage/hnairRepayDetail",
           authority: "loanbusiness:repay:repay:menu"
+        },
+        {
+          name: "还款借据明细",
+          path: "/fundManage/hnairRepayment",
+          authority: "loanbusiness:repay:repay:menu"
         }
       ]
     },
@@ -324,6 +334,19 @@ const asideMenuConfig = [
         {
           name: "线下还款登记",
           path: "/businessChange/HnairofflineRegister",
+          authority: "postloan:postloan:offline-repay:menu"
+        }
+      ]
+    },
+    {
+      name: "展期管理",
+      path: "",
+      icon: "plus-square",
+      authority: "loanbusiness:offline:menu",
+      children: [
+        {
+          name: "展期管理",
+          path: "/businessChange/postponeManage",
           authority: "postloan:postloan:offline-repay:menu"
         }
       ]

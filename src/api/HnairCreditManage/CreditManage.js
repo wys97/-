@@ -256,6 +256,7 @@ export async function exportExcel({
   creditScoreStart,
   creditScoreEnd,
   creditType,
+  tradeType,
   riskResult,
   operatorName,
   creditStatus,
@@ -273,6 +274,7 @@ export async function exportExcel({
     creditStatus: creditStatus ? creditStatus : "",
     operatorName: operatorName ? operatorName : "",
     creditType: creditType ? creditType : "",
+    tradeType: tradeType ? tradeType : "",
     riskResult: riskResult ? riskResult : "",
     page,
     limit

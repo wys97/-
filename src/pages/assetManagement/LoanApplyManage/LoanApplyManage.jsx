@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { Message } from "@alifd/next";
 import SearchForm from "../../components/SearchForm";
-import DataTable from "../../dataTable";
 import loanApplyManageApi from "../../../api/AssetManagement/LoanApplyManage";
 import store from "../../../store";
+import Tables from "../../tables";
+
 import { disburseFormValue } from "../../../store/ScreeningWarehouse/loanTransaction/actions";
 
 function inject_unount(target) {
@@ -35,7 +36,9 @@ export default class LoanApplyManage extends Component {
       loading: false,
       total: 0,
       data: [],
-      refresh: 0
+      refresh: 0,
+      selectedKeys: [],
+      records: [],
     };
     store.subscribe(() => {
       this.setState({
@@ -146,16 +149,25 @@ export default class LoanApplyManage extends Component {
   ];
   toolBtn = [
     {
+      name: "重新发起风控",
+      type: "toRequest",
+      icon: "export",
+      permission: "loanbusiness:sign:sign-record:menu"
+    },
+    {
       name: "导出",
       type: "export",
       icon: "export",
-      permission: "finance:day-settle:day-settle:export"
+      permission: "loanbusiness:use:menu"
     }
   ];
 
   toolBtnFn = {
     export: () => {
       this.exportExcel();
+    },
+    toRequest: () => {
+      this.afreshRequest();
     }
   };
 
@@ -283,6 +295,70 @@ export default class LoanApplyManage extends Component {
     });
   };
 
+
+  selectedKey = selectedKeys => {
+    this.setState({
+      selectedKeys
+    });
+  };
+  record = records => {
+    this.setState({
+      records
+    });
+  };
+
+
+  afreshRequest = () => {
+    const { records } = this.state;
+    if (records.length > 0) {
+      //返回勾选的数据中为风控不通过的数据
+      let checked = records.filter((item) => {
+        if (item.applyStatus == 'RISK_FAILED') {
+          return item
+        }
+      })
+      if (checked.length > 0) {
+        this.setState({
+          loading: true
+        })
+        let idArr = [];
+        checked.map(item => {
+          return idArr.push(JSON.stringify(item.applyId))
+        })
+        loanApplyManageApi.toRequest(idArr).then(res => {
+          if (res.data.code == '200') {
+            this.setState(
+              {
+                loading: true,
+                selectedKeys: [],
+                records:[],
+              },
+              () => this.getData()
+
+            );
+            
+            Message.success(res.data.message);
+          } else {
+            this.setState({
+              loading: false
+            })
+            Message.error(res.data.message);
+          }
+
+        })
+
+      } else {
+        Message.warning('选中的数据中没有风控不通过的数据')
+      }
+
+
+    } else {
+      Message.error('请选择要处理数据')
+    }
+
+  }
+
+
   render() {
     return (
       <div>
@@ -292,7 +368,8 @@ export default class LoanApplyManage extends Component {
           formValue={this.state.formValue}
           onSubmit={formValue => this.onSubmit(formValue)}
         />
-        <DataTable
+     
+        <Tables
           col={this.table}
           toolBtn={this.toolBtn}
           toolBtnFn={this.toolBtnFn}
@@ -302,6 +379,9 @@ export default class LoanApplyManage extends Component {
           pageSize={this.state.limit}
           current={this.state.page}
           total={this.state.total}
+          creditId={this.table[0].key}
+          selectedKey={selectedKeys => this.selectedKey(selectedKeys)}
+          record={records => this.record(records)}
           pageChange={current => this.pageChange(current)}
           limitChange={pageSize => this.limitChange(pageSize)}
           loadTable={this.state.loading}

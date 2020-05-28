@@ -207,20 +207,38 @@ export default class ProductInfoDetail extends Component {
                     <p>{this.state.formInput.backoutDay}<span>天</span></p>
                   </FormItem>
                 </Col>
+                <Col span="12">
+                  <FormItem style={styles.formItem} label="额度冻结最低总额度:">
+                    {/* <Input style={ styles.formContent } placeholder=""/> 天 */}
+                    <p>{this.state.formInput.criticalLimit}</p>
+                  </FormItem>
+                </Col>
               </Row>
               <Row>
-                <Col span="24">
+                <Col span="12">
                   <FormItem labelTextAlign='right' style={styles.formItem} label="扣款顺序:" required>
                     {/* <Input style={ styles.formContent } placeholder=""/>  */}
                     <p>{this.state.formInput.repaySequenceText}</p>
                   </FormItem>
                 </Col>
+                <Col span="12">
+                  <FormItem style={styles.formItem} label="额度冻结比例:">
+                    {/* <Input style={ styles.formContent } placeholder=""/> 天 */}
+                    <p>{this.state.formInput.limitRate}</p>
+                  </FormItem>
+                </Col>
               </Row>
               <Row>
-                <Col span="24">
+                <Col span="12">
                   <FormItem style={styles.formItem} required label="扣失最大天数:">
                     {/* <Input style={ styles.formContent } placeholder=""/> 天 */}
                     <p>{this.state.formInput.debitFailDay}<span>天</span></p>
+                  </FormItem>
+                </Col>
+                <Col span="12">
+                  <FormItem style={styles.formItem} label="额度冻结期限(距第一次提现):">
+                    {/* <Input style={ styles.formContent } placeholder=""/> 天 */}
+                    <p>{this.state.formInput.limitTerm}</p>
                   </FormItem>
                 </Col>
               </Row>

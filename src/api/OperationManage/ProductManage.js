@@ -87,6 +87,14 @@ export async function productPrepayChangePlan(params) {
     data: params
   });
 }
+//产品管理-提还按日计息下拉-下拉框
+export async function prepayInterestMethod () {
+  return axiosService({
+    url: "/admin-api/common/prepay-interest-method",
+    method: "post"
+  });
+}
+
 
 //产品管理-提还违约金公式-下拉框
 export async function productPrepayDamageFormula(params) {
@@ -278,6 +286,9 @@ export async function productUpdate({
   overdueGraceDay,
   overdueFineFormula,
   overdueRate,
+  criticalLimit,
+  limitTerm,
+  limitRate
 }) {
   const params = {
     productNo,
@@ -304,6 +315,9 @@ export async function productUpdate({
     overdueGraceDay,
     overdueFineFormula,
     overdueRate,
+    criticalLimit,
+    limitTerm,
+    limitRate
 
 
   };
@@ -367,7 +381,8 @@ export async function addRateSetting({
   interestRate24,
   interestRate36,
   maxCreditScore,
-  minCreditScore
+  minCreditScore,
+  isInternalEmployee
 }) {
   const params = {
     productNo,
@@ -381,7 +396,8 @@ export async function addRateSetting({
     interestRate24,
     interestRate36,
     maxCreditScore,
-    minCreditScore
+    minCreditScore,
+    isInternalEmployee
   };
   return axiosService({
     url: "/admin-api/product/add-interest-rate",
@@ -404,7 +420,8 @@ export async function editRateSetting({
   interestRate24,
   interestRate36,
   maxCreditScore,
-  minCreditScore
+  minCreditScore,
+  isInternalEmployee
 }) {
   const params = {
     id,
@@ -419,7 +436,8 @@ export async function editRateSetting({
     interestRate24,
     interestRate36,
     maxCreditScore,
-    minCreditScore
+    minCreditScore,
+    isInternalEmployee
   };
   return axiosService({
     url: "/admin-api/product/update-interest-rate",
@@ -452,7 +470,8 @@ export async function prepaymentModification({
   prepayDamageFormula,
   prepayDamageRate,
   prepayDescription,
-  productNo
+  productNo,
+  prepayInterestMethod
 }) {
   const params = {
     isPrepay,
@@ -461,7 +480,8 @@ export async function prepaymentModification({
     prepayDamageFormula,
     prepayDamageRate,
     prepayDescription,
-    productNo
+    productNo,
+    prepayInterestMethod
   };
   return axiosService({
     url: "/admin-api/product/prepay-config/update",
@@ -666,5 +686,6 @@ export default {
   damageRatioDetail,
   overdueConfigUpdate,
   autoApprovalUpdate,
-  damageRatioInsert
+  damageRatioInsert,
+  prepayInterestMethod
 };

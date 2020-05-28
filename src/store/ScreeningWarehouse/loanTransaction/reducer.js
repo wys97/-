@@ -48,6 +48,12 @@ const stateInit = {
     page: 1,
     limit: 10
   },
+  debtDetail: {
+    //贷款业务管理-还款借据明细-默认初始数据
+    formValue: {},
+    page: 1,
+    limit: 10
+  },
   overdueDetail: {
     //贷款业务管理-逾期明细-默认初始数据
     formValue: {
@@ -75,6 +81,12 @@ const stateInit = {
     limit: 10
   },
   feeWaiver: {
+    //贷款业务管理-息费调整-默认初始数据
+    formValue: {},
+    page: 1,
+    limit: 10
+  },
+  postpone: {
     //贷款业务管理-息费调整-默认初始数据
     formValue: {},
     page: 1,
@@ -162,6 +174,16 @@ export default (state = stateInit, action) => {
       }
     });
   }
+  //贷款业务管理-还款借据明细-页面数据修改
+  if (action.type === constants.DEBT_FORMVALUE) {
+    return Object.assign({}, state, {
+      debtDetail: {
+        formValue: action.value.formValue,
+        page: action.value.page,
+        limit: action.value.limit
+      }
+    });
+  }
   //贷款业务管理-逾期明细-页面数据修改
   if (action.type === constants.OVERDUE_FORMVALUE) {
     return Object.assign({}, state, {
@@ -206,6 +228,16 @@ if (action.type === constants.OFFLINE_PAYMENT) {
 if (action.type === constants.FEEWAIVER_FORMVALUE) {
   return Object.assign({}, state, {
     feeWaiver: {
+      formValue: action.value.formValue,
+      page: action.value.page,
+      limit: action.value.limit
+    }
+  });
+}
+//贷款业务管理-展期管理-页面数据修改
+if (action.type === constants.POSTPONE_FORMVALUE) {
+  return Object.assign({}, state, {
+    postpone: {
       formValue: action.value.formValue,
       page: action.value.page,
       limit: action.value.limit
@@ -295,6 +327,16 @@ if (action.type === constants.FEEWAIVER_FORMVALUE) {
         }
       });
     }
+    if (action.path == "/fundManage/hnairRepayment") {
+      //还款借据明细-页面数据-初始化
+      return Object.assign({}, state, {
+        debtDetail: {
+          formValue: {},
+          page: 1,
+          limit: 10
+        }
+      });
+    }
     if (action.path == "/postLendingManage/hnairOverdueRepay") {
       //逾期明细-页面数据-初始化
       return Object.assign({}, state, {
@@ -341,6 +383,16 @@ if (action.type === constants.FEEWAIVER_FORMVALUE) {
       //息费调整-页面数据-初始化
       return Object.assign({}, state, {
         feeWaiver: {
+          formValue: {},
+          page: 1,
+          limit: 10
+        }
+      });
+    }
+    if (action.path == "/businessChange/postponeManage") {
+      //展期管理-页面数据-初始化
+      return Object.assign({}, state, {
+        postpone: {
           formValue: {},
           page: 1,
           limit: 10

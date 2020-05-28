@@ -10,11 +10,20 @@ export async function dueStatus () {
     method: 'post',
   });
 }
+/*
+ * 展期下拉
+ */
+export async function deferStatus () {
+  return axiosService({
+    url: '/admin-api-hnair/rollover-apply/rollover-status-list',
+    method: 'post',
+  });
+}
 
 /**
  * 借据列表
  */
-export async function dueList({dueId,contractNo,customerName,identityNo,phone,partnerName,productName,dueStatus,endedDate,tradeType,page,limit}) {
+export async function dueList({dueId,contractNo,customerName,identityNo,phone,partnerName,productName,isInternalEmployee,payChannelName,dueStatus,endedDate,tradeType,rolloverStatus,page,limit}) {
 	let beginDate = '';
 	let endDate = '';
 	if (endedDate && endedDate.length > 0) {
@@ -26,7 +35,7 @@ export async function dueList({dueId,contractNo,customerName,identityNo,phone,pa
 		    }
 		})
 	}
-	const params = {dueId,contractNo,customerName,identityNo,phone,partnerName,productName,dueStatus,beginDate,endDate,tradeType,page,limit}
+	const params = {dueId,contractNo,customerName,identityNo,phone,partnerName,productName,dueStatus,isInternalEmployee,payChannelName,beginDate,endDate,tradeType,rolloverStatus,page,limit}
   return axiosService({
 		url: '/admin-api/loan-due/list',
 		method: 'post',
@@ -96,10 +105,12 @@ export async function exportExcel({
   productName,
   loanAmount,
   loanBal,
+  tradeType,
   unpaidAmount,
   dueStatus,
 	loanTerm,
-	yearInterestRate,
+  yearInterestRate,
+  isInternalEmployee,
 	valueDate,
   dueDate,
   endedDate,
@@ -116,7 +127,7 @@ export async function exportExcel({
 		    	beginDate = new Date(item).Format('yyyy-MM-dd');
 		    }
 		})
-	}
+  }
   const params = {
     dueId: dueId ? dueId : "",
     contractNo: contractNo ? contractNo : "",
@@ -134,8 +145,10 @@ export async function exportExcel({
 		yearInterestRate: yearInterestRate ? yearInterestRate : "",
 		valueDate: valueDate && valueDate._d ? new Date(valueDate._d).Format("yyyy-MM-dd") : "",
     dueDate: dueDate && dueDate._d ? new Date(dueDate._d).Format("yyyy-MM-dd") : "",
+    tradeType: tradeType ? tradeType : "",
     beginDate: beginDate ? beginDate : "",
     endDate: endDate ? endDate : "",
+    isInternalEmployee:isInternalEmployee?true:isInternalEmployee===false?false:'',
 		page,
     limit
   };
@@ -167,7 +180,8 @@ export default {
 	repayDetail,
 	overdueDetail,
 	exportExcel,
-  tradeTypeEnum
+  tradeTypeEnum,
+  deferStatus
 }
 
 Date.prototype.Format = function (fmt) {

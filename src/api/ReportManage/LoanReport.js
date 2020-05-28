@@ -16,6 +16,7 @@ export async function trend(data) {
   const params = {
     productNo:data.productNo,
     dateType:data.dateType,
+    isInternalEmployee: data.isInternalEmployee,
     dateEnd,
     dateBegin
   }
@@ -35,25 +36,31 @@ export async function productList() {
 }
 
 // 放款期限分布
-export async function periodStatistics(id) {
-  if(id == '') {
-    id = "all"
+export async function periodStatistics({productNo, isInternalEmployee}) {
+  if (productNo == '') {
+    productNo = 'all'
+  }
+  if (isInternalEmployee == '') {
+    isInternalEmployee = 'all'
   }
   return axiosService({
-    url: '/admin-api/loan-report/period-statistics/' + id,
-    method: 'post',
+    url: '/admin-api/loan-report/period-statistics/' + productNo + "/" + isInternalEmployee,
+    method: 'post'
   });
   
 }
 
 //贷款余额分布
-export async function loanLeft(id) {
-  if (id == '') {
-    id = "all"
+export async function loanLeft({ productNo, isInternalEmployee }) {
+  if(productNo==''){
+    productNo='all'
+  }
+  if (isInternalEmployee == '') {
+    isInternalEmployee = 'all'
   }
   return axiosService({
-    url: '/admin-api/loan-report/loan-left/'+id,
-    method: 'post',
+    url: '/admin-api/loan-report/loan-left/' + productNo + "/" + isInternalEmployee,
+    method: 'post'
   });
 }
 

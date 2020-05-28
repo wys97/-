@@ -14,11 +14,23 @@ export default class LoanReport extends Component {
       twoChartValue: {},
       // 放款报表
       date: [],
+      isInternalEmployeeType: [
+        {label:"全部员工",value:""},
+        {
+          label: "是",
+          value: true,
+        },
+        {
+          label: "否",
+          value: false,
+        },
+      ],
       dateType: "DAY",
       productNo: '',
+      isInternalEmployee:"",
       limitValue: [],
       creditValue: [],
-      selectType: []
+      selectType: [],
     };
   }
 
@@ -54,7 +66,7 @@ export default class LoanReport extends Component {
   }
 
   getOne = () => {
-    loanReportApi.periodStatistics(this.state.productNo).then(res => {
+    loanReportApi.periodStatistics({productNo:this.state.productNo,isInternalEmployee:this.state.isInternalEmployee}).then(res => {
       if (res.data.code === "200") {
         let dv = [];
         // 构建柱状图的数据源
@@ -80,6 +92,7 @@ export default class LoanReport extends Component {
     // 柱状图
     let params = {}
     params.productNo = this.state.productNo
+    params.isInternalEmployee = this.state.isInternalEmployee;
     params.dateType = this.state.dateType
     params.date = this.state.date
     loanReportApi.trend(params)
@@ -114,19 +127,21 @@ export default class LoanReport extends Component {
   };
 
   getFour = () => {
-    loanReportApi.loanLeft(this.state.productNo).then(res => {
+    loanReportApi.loanLeft({productNo:this.state.productNo,isInternalEmployee:this.state.isInternalEmployee}).then((res) => {
       if (res.data.code === "200") {
         let data = [];
         // 构建柱状图的数据源
-        res.data.data.map(item => {
+        res.data.data.map((item) => {
           data.push({
             rage: item.rage,
-            在贷余额占比: Number(item.percent.slice(0, item.percent.length - 1)),
-            笔数: item.count
+            在贷余额占比: Number(
+              item.percent.slice(0, item.percent.length - 1)
+            ),
+            笔数: item.count,
           });
         });
         this.setState({
-          creditValue: data
+          creditValue: data,
         });
       } else {
         Message.error(res.data.message);
@@ -145,8 +160,8 @@ export default class LoanReport extends Component {
   }
 
   onClick = () => { //重置按钮
-    this.setState({ date: [], productNo: "", dateType: "DAY" }, () =>
-      this.getTwo()
+    this.setState({ date: [], productNo: "", dateType: "DAY",isInternalEmployee: "" }, () =>
+      this.getTwo(),this.getOne(),this.getFour()
     );
   }
 
@@ -158,6 +173,15 @@ export default class LoanReport extends Component {
   }
   handChangeTree = value => { //贷款余额分布 选择产品
     this.setState({ productNo: value }, () => this.getFour());
+  }
+  isInternalEmployeeChange = value => { //放款统计 选择是否内部员工
+    this.setState({ isInternalEmployee: value }, () => this.getTwo());
+  }
+  isInternalEmployeeChangeTwo = value => { //放款期限分布 选择是否内部员工
+    this.setState({ isInternalEmployee: value }, () => this.getOne());
+  }
+  isInternalEmployeeChangeTree = value => { //贷款余额分布 选择是否内部员工
+    this.setState({ isInternalEmployee: value }, () => this.getFour());
   }
 
   onOk = val => { //日期选择
@@ -216,6 +240,14 @@ export default class LoanReport extends Component {
                 dataSource={this.state.selectType}
                 onChange={this.handChange}
               />
+              <Select
+                followTrigger
+                name="isInternalEmployee"
+                style={{ marginRight: "10px" }}
+                defaultValue={{ value: "", label: "是否集团内部员工" }}
+                dataSource={this.state.isInternalEmployeeType}
+                onChange={this.isInternalEmployeeChange}
+              />
               <span>
                 <Button
                   type={this.state.dateType === "DAY" ? "primary" : "normal"}
@@ -251,7 +283,7 @@ export default class LoanReport extends Component {
             data={this.state.twoChartValue}
             scale={scale}
             padding="auto"
-            onTooltipChange={ev => {
+            onTooltipChange={(ev) => {
               let items = ev.items; // tooltip显示的项
               items[0].value = items[0].point._origin.text + "元";
               if (items[1]) {
@@ -267,7 +299,7 @@ export default class LoanReport extends Component {
               items={[
                 {
                   value: "放款金额",
-                  marker: { symbol: "square", fill: "#60A2FF", radius: 5 }
+                  marker: { symbol: "square", fill: "#60A2FF", radius: 5 },
                 },
                 {
                   value: "放款笔数",
@@ -275,9 +307,9 @@ export default class LoanReport extends Component {
                     symbol: "hyphen",
                     stroke: "#43C25B",
                     radius: 5,
-                    lineWidth: 2
-                  }
-                }
+                    lineWidth: 2,
+                  },
+                },
               ]}
               select={false}
             />
@@ -291,7 +323,7 @@ export default class LoanReport extends Component {
                 "type",
                 () => {
                   return "#60A2FF";
-                }
+                },
               ]}
             />
             <Geom
@@ -315,6 +347,14 @@ export default class LoanReport extends Component {
                 dataSource={this.state.selectType}
                 onChange={this.handChangeOne}
               />
+              <Select
+                followTrigger
+                name="isInternalEmployee"
+                style={{ marginRight: "10px" }}
+                defaultValue={{ value: "", label: "是否集团内部员工" }}
+                dataSource={this.state.isInternalEmployeeType}
+                onChange={this.isInternalEmployeeChangeTwo}
+              />
             </div>
           </div>
           <Chart
@@ -324,7 +364,7 @@ export default class LoanReport extends Component {
             scale={scales}
             padding="auto"
             forceFit
-            onTooltipChange={ev => {
+            onTooltipChange={(ev) => {
               let items = ev.items; // tooltip显示的项
               items[0].value =
                 items[0].point._origin.放款笔数占比 +
@@ -339,7 +379,7 @@ export default class LoanReport extends Component {
             <Axis name="放款笔数占比" />
             <Tooltip
               crosshairs={{
-                type: "y"
+                type: "y",
               }}
             />
             <Geom type="interval" position="rage*放款笔数占比" />
@@ -358,6 +398,14 @@ export default class LoanReport extends Component {
                 dataSource={this.state.selectType}
                 onChange={this.handChangeTree}
               />
+              <Select
+                followTrigger
+                name="isInternalEmployee"
+                style={{ marginRight: "10px" }}
+                defaultValue={{ value: "", label: "是否集团内部员工" }}
+                dataSource={this.state.isInternalEmployeeType}
+                onChange={this.isInternalEmployeeChangeTree}
+              />
             </div>
           </div>
           <Chart
@@ -367,7 +415,7 @@ export default class LoanReport extends Component {
             data={this.state.creditValue}
             scale={cols}
             padding="auto"
-            onTooltipChange={ev => {
+            onTooltipChange={(ev) => {
               let items = ev.items; // tooltip显示的项
               items[0].value =
                 items[0].point._origin.在贷余额占比 +
@@ -382,7 +430,7 @@ export default class LoanReport extends Component {
             <Axis name="在贷余额占比" />
             <Tooltip
               crosshairs={{
-                type: "y"
+                type: "y",
               }}
             />
             <Geom type="interval" position="rage*在贷余额占比" />

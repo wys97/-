@@ -178,7 +178,7 @@ export default class LoanApplyDetail extends Component {
       <div>
         <IceContainer>
           <div className="CustomerTabTitle" style={{display: 'flex', justifyContent: 'space-between'}}>
-            <h3>支用管理详情</h3>
+            <h3>展期审批详情</h3>
           </div>
 
           <div className="contain-con" style={{marginBottom: '40px'}}>

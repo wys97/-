@@ -36,12 +36,13 @@ export default class PrepaymentSetting extends Component {
       formValue: {
         productNo: props.id,
       },
-      productName: '',
+      productName: "",
       data: [],
       loading: false,
       visible: false,
       prepayChangePlan: {}, //产品管理-提还计划更新方式-下拉框
       prepayDamageFormula: {}, //产品管理-提还违约金公式-下拉框
+      prepayInterestMethod: {}, //产品管理-提还利息配置-下拉框
       rateSettingInfo: {
         isPrepay: "",
         isPrepayDamage: "",
@@ -53,14 +54,15 @@ export default class PrepaymentSetting extends Component {
         createTime: "",
         modifierName: "",
         modifyTime: "",
-        data: []
-      }
+        data: [],
+      },
     };
   }
 
   componentWillMount() {
     this.getproductPrepayChangePlan();
     this.getproductPrepayDamageFormula();
+    this.getprepayInterestMethod();
   }
 
   componentDidMount() {
@@ -92,6 +94,18 @@ export default class PrepaymentSetting extends Component {
       }
     });
   };
+  getprepayInterestMethod = () =>{
+    //产品管理-提还利息配置-下拉框
+    productManageApi.prepayInterestMethod().then((res) => {
+      if (res.data.code === "200") {
+        this.setState({
+          prepayInterestMethod: res.data.data,
+        });
+      } else {
+        Message.error(res.data.message);
+      }
+    });
+  }
 
   getData = () => {
     //提前还款配置 - 详情
@@ -151,6 +165,7 @@ export default class PrepaymentSetting extends Component {
         prepayDamageFormula: "",
         prepayDamageRate: "",
         prepayDescription: "",
+        prepayInterestMethod:"",
         creatorName: "",
         createTime: "",
         modifierName: "",
@@ -167,6 +182,7 @@ export default class PrepaymentSetting extends Component {
           prepayChangePlan: "",
           prepayDamageFormula: "",
           prepayDamageRate: "",
+          prepayInterestMethod:"",
           prepayDescription: "",
           creatorName: "",
           createTime: "",
@@ -454,6 +470,29 @@ export default class PrepaymentSetting extends Component {
                 </Col>
               </Row>
               <Row>
+                <Col span="24">
+                  <FormItem
+                    labelTextAlign="right"
+                    style={styles.formItem}
+                    label="提还利息配置:"
+                    required
+                    requiredMessage="请选择提还利息配置"
+                  >
+                    <Radio.Group name="prepayInterestMethod" itemDirection="ver">
+                      {Object.keys(this.state.prepayInterestMethod).map(
+                        (key, index) => {
+                          return (
+                            <Radio key={index} value={key}>
+                              {this.state.prepayInterestMethod[key]}
+                            </Radio>
+                          );
+                        }
+                      )}
+                    </Radio.Group>
+                  </FormItem>
+                </Col>
+              </Row>
+              <Row>
                 <Col span="12">
                   <FormItem
                     label="是否收取提还违约金:"
@@ -512,9 +551,11 @@ export default class PrepaymentSetting extends Component {
                 <Col span="24">
                   <FormItem
                     labelTextAlign="right"
-                    style= {{ display: "flex",
-                    whiteSpace: "nowrap",
-                    lineHeight: "28px",}}
+                    style={{
+                      display: "flex",
+                      whiteSpace: "nowrap",
+                      lineHeight: "28px",
+                    }}
                     label="提还违约金倍数配置:"
                     required
                   >
@@ -526,7 +567,7 @@ export default class PrepaymentSetting extends Component {
                       lineBtnFn={this.lineBtnFn}
                       loadTable={this.state.loading}
                       data={this.state.data}
-                      style = {{width: "90%"}}
+                      style={{ width: "90%" }}
                     />
                   </FormItem>
                 </Col>
@@ -574,9 +615,9 @@ export default class PrepaymentSetting extends Component {
               <Form.Submit
                 type="primary"
                 style={styles.saveButton}
-                name = "update"
+                name="update"
                 validate
-                onClick={(v)=> this.productUpdate(v)}
+                onClick={(v) => this.productUpdate(v)}
               >
                 保存
               </Form.Submit>
@@ -585,113 +626,122 @@ export default class PrepaymentSetting extends Component {
         </IceContainer>
         {/* 还款配置 - 新增修改公用弹窗 */}
         <Dialog
-            style={{ width: "60%", height: "600px", borderRadius: "8px" }}
-            title=""
-            footer={false}
-            visible={this.state.visible}
-            onClose={this.onClose}
+          style={{ width: "60%", height: "600px", borderRadius: "8px" }}
+          title=""
+          footer={false}
+          visible={this.state.visible}
+          onClose={this.onClose}
+        >
+          <h3
+            style={{
+              borderBottom: "1px solid #eee",
+              paddingBottom: "15px",
+            }}
           >
-            <h3
-              style={{
-                borderBottom: "1px solid #eee",
-                paddingBottom: "15px"
-              }}
-            >
-              {this.state.type === "add" ? "新增" : "修改"}提还违约金倍数配置
-            </h3>
-            <Form
-              labelTextAlign={"right"}
-              {...formItemLayout}
-              field={this.fields}
-            >
-              <Row>
-                <Col span="12">
-                  <FormItem
-                    labelTextAlign="right"
-                    style={styles.formItems}
-                    label="产品编号:"
-                    required
-                    requiredMessage="产品编号是必填字段"
+            {this.state.type === "add" ? "新增" : "修改"}提还违约金倍数配置
+          </h3>
+          <Form
+            labelTextAlign={"right"}
+            {...formItemLayout}
+            field={this.fields}
+          >
+            <Row>
+              <Col span="12">
+                <FormItem
+                  labelTextAlign="right"
+                  style={styles.formItems}
+                  label="产品编号:"
+                  required
+                  requiredMessage="产品编号是必填字段"
+                >
+                  {this.state.formValue.productNo}
+                  <input type="hidden" name="id" />
+                </FormItem>
+              </Col>
+              <Col span="12">
+                <FormItem
+                  labelTextAlign="right"
+                  style={styles.formItems}
+                  label="产品名称:"
+                  required
+                  requiredMessage="产品名称是必填字段"
+                >
+                  {this.state.data.productName}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="24">
+                <FormItem
+                  labelTextAlign="right"
+                  style={styles.formItem}
+                  label="支用期数:"
+                  required
+                  requiredMessage="请选择支用期数"
+                >
+                  <Select
+                    followTrigger
+                    style={{ width: "240px" }}
+                    name="loanTerm"
                   >
-                    {this.state.formValue.productNo}
-                    <input type="hidden" name="id" />
-                  </FormItem>
-                </Col>
-                <Col span="12">
-                  <FormItem
-                    labelTextAlign="right"
-                    style={styles.formItems}
-                    label="产品名称:"
-                    required
-                    requiredMessage="产品名称是必填字段"
-                  >
-                    {this.state.data.productName}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row>
-                  <Col span="24">
-                    <FormItem labelTextAlign='right' style={styles.formItem} label="支用期数:" required
-                              requiredMessage="请选择支用期数">
-                      <Select followTrigger style={{width: "240px"}} name="loanTerm">
-                        <Option value={1}>1</Option>
-                        <Option value={3}>3</Option>
-                        <Option value={6}>6</Option>
-                        <Option value={9}>9</Option>
-                        <Option value={12}>12</Option>
-                        <Option value={24}>24</Option>
-                        <Option value={36}>36</Option>
-                      </Select>
-                    </FormItem>
-                  </Col>
-                </Row>
-              <Row>
-                <Col span="12">{minPeriod}</Col>
-                <Col span="12">{maxPeriod}</Col>
-              </Row>
-              <Row>
-                <Col span="12">{damageRatio}</Col>
-              </Row>
-              <Row>
-                <Col span="12">
-                  <FormItem style={styles.formItems} label="创建人员:">
-                    <p>{this.fields.getValue("creatorName")}</p>
-                  </FormItem>
-                </Col>
-                <Col span="12">
-                  <FormItem style={styles.formItems} label="创建时间:">
-                    <p>{this.fields.getValue("createTime")}</p>
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row>
-                <Col span="12">
-                  <FormItem style={styles.formItems} label="修改人员:">
-                    <p>{this.fields.getValue("modifierName")}</p>
-                  </FormItem>
-                </Col>
-                <Col span="12">
-                  <FormItem style={styles.formItems} label="修改时间:">
-                    <p>{this.fields.getValue("updateTime")}</p>
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <FormItem label="" style={{ textAlign: "center" }} />
-                  <Form.Submit
-                    validate
-                    type="primary"
-                    name = "add"
-                    style={styles.saveButton}
-                    onClick={(value) => this.onSave(value)}
-                  >
-                    保存
-                  </Form.Submit>
-                </Col>
-              </Row>
-            </Form>
-          </Dialog>
+                    <Option value={1}>1</Option>
+                    <Option value={3}>3</Option>
+                    <Option value={6}>6</Option>
+                    <Option value={9}>9</Option>
+                    <Option value={12}>12</Option>
+                    <Option value={24}>24</Option>
+                    <Option value={36}>36</Option>
+                  </Select>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="12">{minPeriod}</Col>
+              <Col span="12">{maxPeriod}</Col>
+            </Row>
+            <Row>
+              <Col span="12">{damageRatio}</Col>
+            </Row>
+            <Row>
+              <Col span="12">
+                <FormItem style={styles.formItems} label="创建人员:">
+                  <p>{this.fields.getValue("creatorName")}</p>
+                </FormItem>
+              </Col>
+              <Col span="12">
+                <FormItem style={styles.formItems} label="创建时间:">
+                  <p>{this.fields.getValue("createTime")}</p>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="12">
+                <FormItem style={styles.formItems} label="修改人员:">
+                  <p>{this.fields.getValue("modifierName")}</p>
+                </FormItem>
+              </Col>
+              <Col span="12">
+                <FormItem style={styles.formItems} label="修改时间:">
+                  <p>{this.fields.getValue("updateTime")}</p>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <FormItem label="" style={{ textAlign: "center" }} />
+                <Form.Submit
+                  validate
+                  type="primary"
+                  name="add"
+                  style={styles.saveButton}
+                  onClick={(value) => this.onSave(value)}
+                >
+                  保存
+                </Form.Submit>
+              </Col>
+            </Row>
+          </Form>
+        </Dialog>
       </div>
     );
   }

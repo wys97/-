@@ -128,6 +128,7 @@ export default class CreditApprovalDetail extends Component {
   };
 
 
+
   goBack = () => {
     this.props.history.go(-1);
   };

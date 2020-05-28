@@ -146,6 +146,13 @@ import ApprovalProcess from "./pages/approvalProcess/approvalProcess";
 import TreeStateQuery from "./pages/treeStateQuery/treeStateQuery";
 import AppDownload from "./pages/appManage/appDownload/appDownload";
 import BusinessConfig from "./pages/businessConfig/businessConfig";
+import PostponeManage from "./pages/postponeManage/postponeManage";
+import PostponeAdd from "./pages/postponeManage/postponeAdd";
+import PostponeDetail from "./pages/postponeManage/postponeDetail";
+import PostpneApprove from "./pages/postponeManage/postponeApprove/postponeApprove";
+import ApproveDetail from "./pages/postponeManage/postponeApprove/approveDetail";
+import Approve from "./pages/postponeManage/postponeApprove/approve";
+import HnairRepayment from "./pages/fundManage/HnairRepayment/hnairRepayment";
 
 const routerConfig = [
   //   {
@@ -711,6 +718,11 @@ const routerConfig = [
     component: hnairRepayDetailInfo //海航添加-还款明细-详情（贷款业务管理-还款明细）
   },
   {
+    path: "/fundManage/hnairRepayment",
+    layout: BasicLayout,
+    component: HnairRepayment //海航添加-还款借据明细（贷款业务管理-还款明细）
+  },
+  {
     path: "/hnairLoanManage/hnairDrawBack",
     layout: BasicLayout,
     component: hnairDrawBack //海航添加-退款退票-退票明细（贷款业务管理-退款退票）
@@ -834,6 +846,36 @@ const routerConfig = [
     path: "/businessConfig",
     layout: BasicLayout,
     component: BusinessConfig //支付业务配置
+  },
+  {
+    path: "/businessChange/postponeManage",
+    layout: BasicLayout,
+    component: PostponeManage  //展期管理
+  },
+  {
+    path: "/businessChange/postponeAdd",
+    layout: BasicLayout,
+    component: PostponeAdd  //新增展期
+  },
+  {
+    path: "/businessChange/postponeDetail",
+    layout: BasicLayout,
+    component: PostponeDetail  //详情展期
+  },
+  {
+    path: "/approvalManage/postponeApprove",
+    layout: BasicLayout,
+    component: PostpneApprove  //展期审批列表
+  },
+  {
+    path: "/approvalManage/approve",
+    layout: BasicLayout,
+    component: Approve  //展期审批
+  },
+  {
+    path: "/approvalManage/approveDetail",
+    layout: BasicLayout,
+    component: ApproveDetail  //展期审批详情
   },
 
 ];

@@ -89,7 +89,8 @@ export default class RefundProjectDeploy extends Component {
       repayMethod: {}, //支持的还款方式-下拉框
       firstRepayDay: {}, // 不足月首期还款日-下拉框
       firstInterestMethod: {}, // 首期不足月计息方式-下拉框
-      roundMethod: {} //产品管理-整数化方法-下拉框
+      roundMethod: {}, //产品管理-整数化方法-下拉框
+      internalStaff: false, //是否内部员工
     };
   }
 
@@ -108,6 +109,7 @@ export default class RefundProjectDeploy extends Component {
     { title: "操作", key: "operate", width: 120, cell: true, align: "center" }
   ];
   tables = [
+    { title: "是否内部员工", key: "isInternalEmployee", width: 100 },
     { title: "信用分下限", key: "minCreditScore", width: 100 },
     { title: "信用分上限", key: "maxCreditScore", width: 150 },
     { title: "金额下限(元)", key: "loanMinAmount", width: 100 },
@@ -359,6 +361,7 @@ export default class RefundProjectDeploy extends Component {
             visibles: true,
             type: "edits",
             rateSettingInfo: res.data.data,
+            internalStaff:res.data.data.isInternalEmployee,
             rates: res.data.data.rates
           });
         } else {
@@ -545,6 +548,12 @@ export default class RefundProjectDeploy extends Component {
               (data = item),
                 (data.interestRate36Str = <Icon type="close" size="xs" />);
             }
+            if(item.isInternalEmployee){
+              data.isInternalEmployee = '是'
+            }else{
+              data.isInternalEmployee = '否'
+            }
+
             return data;
           });
           this.setState({
@@ -725,6 +734,7 @@ export default class RefundProjectDeploy extends Component {
     if (errors) {
       return;
     }
+    param.isInternalEmployee = this.state.internalStaff;
     if (this.state.type === "add") {
       param.productNo = this.state.formValue.productNo;
       this.addRates(param);
@@ -771,6 +781,16 @@ export default class RefundProjectDeploy extends Component {
     });
   };
 
+  //是否是内部员工
+  setInternalStaff=(value)=>{
+    this.setState({
+      internalStaff:value
+    })
+  }
+
+
+
+
   render() {
     const minCreditScore =
       this.state.type === "add" ? (
@@ -784,19 +804,19 @@ export default class RefundProjectDeploy extends Component {
           <Input name="minCreditScore" />
         </FormItem>
       ) : (
-        <FormItem
-          labelTextAlign="right"
-          name="pass"
-          style={styles.formItem}
-          required
-          label="信用分下限:"
-        >
-          <Input
-            name="minCreditScore"
-            defaultValue={this.state.rateSettingInfo.minCreditScore}
-          />
-        </FormItem>
-      );
+          <FormItem
+            labelTextAlign="right"
+            name="pass"
+            style={styles.formItem}
+            required
+            label="信用分下限:"
+          >
+            <Input
+              name="minCreditScore"
+              defaultValue={this.state.rateSettingInfo.minCreditScore}
+            />
+          </FormItem>
+        );
     const maxCreditScore =
       this.state.type === "add" ? (
         <FormItem
@@ -809,19 +829,19 @@ export default class RefundProjectDeploy extends Component {
           <Input name="maxCreditScore" />
         </FormItem>
       ) : (
-        <FormItem
-          labelTextAlign="right"
-          name="pass"
-          style={styles.formItem}
-          required
-          label="信用分上限:"
-        >
-          <Input
-            name="maxCreditScore"
-            defaultValue={this.state.rateSettingInfo.maxCreditScore}
-          />
-        </FormItem>
-      );
+          <FormItem
+            labelTextAlign="right"
+            name="pass"
+            style={styles.formItem}
+            required
+            label="信用分上限:"
+          >
+            <Input
+              name="maxCreditScore"
+              defaultValue={this.state.rateSettingInfo.maxCreditScore}
+            />
+          </FormItem>
+        );
 
     const loanMaxAmount =
       this.state.type === "add" ? (
@@ -835,20 +855,20 @@ export default class RefundProjectDeploy extends Component {
           <Input name="loanMaxAmount" addonTextAfter="元" />
         </FormItem>
       ) : (
-        <FormItem
-          labelTextAlign="right"
-          name="pass"
-          style={styles.formItem}
-          required
-          label="金额上限:"
-        >
-          <Input
-            name="loanMaxAmount"
-            defaultValue={this.state.rateSettingInfo.loanMaxAmount}
-          />
+          <FormItem
+            labelTextAlign="right"
+            name="pass"
+            style={styles.formItem}
+            required
+            label="金额上限:"
+          >
+            <Input
+              name="loanMaxAmount"
+              defaultValue={this.state.rateSettingInfo.loanMaxAmount}
+            />
           元
-        </FormItem>
-      );
+          </FormItem>
+        );
 
     const loanMinAmount =
       this.state.type === "add" ? (
@@ -862,20 +882,20 @@ export default class RefundProjectDeploy extends Component {
           <Input name="loanMinAmount" addonTextAfter="元" />
         </FormItem>
       ) : (
-        <FormItem
-          labelTextAlign="right"
-          name="pass"
-          style={styles.formItem}
-          required
-          label="金额下限:"
-        >
-          <Input
-            name="loanMinAmount"
-            defaultValue={this.state.rateSettingInfo.loanMinAmount}
-          />
+          <FormItem
+            labelTextAlign="right"
+            name="pass"
+            style={styles.formItem}
+            required
+            label="金额下限:"
+          >
+            <Input
+              name="loanMinAmount"
+              defaultValue={this.state.rateSettingInfo.loanMinAmount}
+            />
           元
-        </FormItem>
-      );
+          </FormItem>
+        );
     return (
       <div>
         <div className="contain-con">
@@ -1186,6 +1206,21 @@ export default class RefundProjectDeploy extends Component {
                         <Checkbox value="24">24期</Checkbox>
                         <Checkbox value="36">36期</Checkbox>
                       </Checkbox.Group>
+                    </FormItem>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span="24">
+                    <FormItem
+                      labelTextAlign="right"
+                      style={styles.formItem}
+                      label="是否内部员工:"
+                      required  
+                    >
+                      <Radio.Group value={this.state.internalStaff} onChange={this.setInternalStaff} defaultValue={false}>
+                        <Radio value={true}>是</Radio>
+                        <Radio value={false}>否</Radio>
+                      </Radio.Group>
                     </FormItem>
                   </Col>
                 </Row>

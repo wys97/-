@@ -373,9 +373,14 @@ export default class ProductUpdateDetail extends Component {
                       <Input style={styles.formInputBorder} name="backoutDay" placeholder=""/> 天
                     </FormItem>
                   </Col>
+                  <Col span="12">
+                  <FormItem style={styles.formItem} label="额度冻结最低总额度:" requiredMessage="请输入额度冻结最低总额度">
+                    <Input style={ styles.formContent } placeholder="" name="criticalLimit"/>
+                  </FormItem>
+                </Col>
                 </Row>
                 <Row>
-                  <Col span="24">
+                  <Col span="12">
                     <FormItem labelTextAlign='right' style={styles.formItem} label="扣款顺序:" required
                               requiredMessage="请输入扣款顺序">
                       <Radio.Group name="repaySequence" style={styles.formInputBorder}>
@@ -388,12 +393,22 @@ export default class ProductUpdateDetail extends Component {
                       </Radio.Group>
                     </FormItem>
                   </Col>
+                  <Col span="12">
+                    <FormItem style={styles.formItem} label="额度冻结比例:" requiredMessage="请输入额度冻结比例">
+                      <Input style={ styles.formContent } placeholder="" name="limitRate"/>
+                    </FormItem>
+                  </Col>
                 </Row>
                 <Row>
-                  <Col span="24">
+                  <Col span="12">
                     <FormItem style={styles.formItem} required requiredMessage="请输入损失最大天数" format="number"
                               formatMessage="请输入数字" label="扣失最大天数:">
                       <Input style={styles.formInputBorder} name="debitFailDay" placeholder=""/> 天
+                    </FormItem>
+                  </Col>
+                  <Col span="12">
+                    <FormItem style={styles.formItem} label="额度冻结期限(距第一次提现):" requiredMessage="请输入额度冻结期限">
+                      <Input style={ styles.formContent } placeholder="" name="limitTerm"/>
                     </FormItem>
                   </Col>
                 </Row>

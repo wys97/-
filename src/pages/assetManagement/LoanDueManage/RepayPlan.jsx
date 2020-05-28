@@ -124,6 +124,11 @@ export default class RepayPlan extends Component {
       key: 'isClearText',
       width: 100,
     },
+    {
+      title: '展期标志',
+      key: 'rolloverCountText',
+      width: 100,
+    },
   ];
 
   render() {

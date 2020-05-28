@@ -40,37 +40,48 @@ export default class OverdueRepay extends React.Component {
         {
           label: "借据号",
           key: "dueId",
-          type: ""
+          type: "",
         },
         {
           label: "客户名称",
           key: "customerName",
-          type: ""
+          type: "",
         },
         {
           label: "手机号",
           key: "phone",
-          type: ""
+          type: "",
         },
         {
           label: "证件号",
           key: "identityNo",
-          type: ""
+          type: "",
         },
         {
           label: "逾期最大天数",
           keys: ["overdueDayBegin", "overdueDayEnd"],
-          type: "section"
+          type: "section",
         },
         {
           label: "逾期未还本金",
           keys: ["overdueAmountBegin", "overdueAmountEnd"],
-          type: "section"
+          type: "section",
         },
         {
           label: "逾期未还总额",
           keys: ["overdueTotalAmountBegin", "overdueTotalAmountEnd"],
-          type: "section"
+          type: "section",
+        },
+        {
+          label: "产品名称",
+          key: "productName",
+          type: "select",
+          list: [
+            {
+              key: "全部",
+              value: "",
+            },
+          ],
         },
         {
           label: "是否结清逾期",
@@ -79,18 +90,53 @@ export default class OverdueRepay extends React.Component {
           list: [
             {
               key: "全部",
-              value: ""
-            }
-          ]
-        }
+              value: "",
+            },
+          ],
+        },
+        {
+          label: "恒生迁移标志",
+          key: "isHsLoanDue",
+          type: "select",
+          list: [
+            {
+              key: "全部",
+              value: "",
+            },
+            {
+              key: "是",
+              value: true,
+            },
+            {
+              key: "否",
+              value: false,
+            },
+          ],
+        },
+        {
+          label: "是否集团内部员工",
+          key: "isInternalEmployee",
+          type: "select",
+          list: [
+            { key: "全部", value: "" },
+            {
+              key: "是",
+              value: true,
+            },
+            {
+              key: "否",
+              value: false,
+            },
+          ],
+        },
       ],
-      totalData: {},  //逾期数据
+      totalData: {}, //逾期数据
     };
     store.subscribe(() => {
       this.setState({
         formValue: store.getState().loanTransaction.overdueDetail.formValue,
         page: store.getState().loanTransaction.overdueDetail.page,
-        limit: store.getState().loanTransaction.overdueDetail.limit
+        limit: store.getState().loanTransaction.overdueDetail.limit,
       });
     });
   }
@@ -99,94 +145,105 @@ export default class OverdueRepay extends React.Component {
     {
       title: "借据号",
       key: "dueId",
-      width: 100
+      width: 100,
     },
     {
       title: "产品名称",
       key: "productName",
-      width: 80
+      width: 80,
     },
     {
       title: "客户名称",
       key: "customerName",
-      width: 80
+      width: 80,
     },
     {
       title: "手机号",
       key: "phone",
-      width: 110
+      width: 110,
     },
     {
-      title: "金鹏卡号",
+      title: "金鹏手机号",
       key: "jinpengPhone",
-      width: 130
+      width: 130,
     },
     {
       title: "证件号",
       key: "identityNo",
-      width: 160
+      width: 160,
     },
     {
       title: "贷款金额(元)",
       key: "loanAmount",
       width: 100,
-      align: "right"
+      align: "right",
     },
     {
       title: "贷款余额(元)",
       key: "loanBalance",
       width: 100,
-      align: "right"
+      align: "right",
     },
     {
       title: "贷款期限(月)",
       key: "loanTerm",
-      width: 80
+      width: 80,
     },
     {
       title: "还款方式",
       key: "repayMethodText",
-      width: 80
+      width: 80,
     },
     {
       title: "逾期最大天数",
       key: "overdueDays",
-      width: 80
+      width: 80,
     },
     {
       title: "借据当前逾期天数",
       key: "unClearOverdueDay",
-      width: 100
+      width: 100,
     },
     {
       title: "逾期未还本金(元)",
       key: "overduePrincipal",
       align: "right",
-      width: 100
+      width: 100,
     },
     {
       title: "逾期未还利息(元) ",
       key: "overdueInterest",
       align: "right",
-      width: 100
+      width: 100,
     },
     {
       title: "逾期未还罚息(元) ",
       key: "overdueFine",
       align: "right",
-      width: 100
+      width: 100,
     },
     {
       title: "逾期未还总额(元) ",
       key: "overdueAmount",
       align: "right",
-      width: 100
+      width: 100,
+    },
+    {
+      title: "恒生迁移标志",
+      key: "isHsLoanDueText",
+      align: "center",
+      width: 80,
     },
     {
       title: "是否结清逾期",
       key: "isClearText",
+      width: 80,
+    },
+    {
+      title: "是否集团内部员工",
+      key: "isInternalEmployeeText",
       width: 80
-    }
+    },
     // {
     //   title: '操作',
     //   key: 'operate',
@@ -200,18 +257,19 @@ export default class OverdueRepay extends React.Component {
       name: "导出",
       type: "export",
       icon: "export",
-      permission: "finance:day-settle:day-settle:export"
-    }
+      permission: "loanbusiness:overdue:overdue:menu" 
+    },
   ];
 
   toolBtnFn = {
     export: () => {
       this.exportExcel();
-    }
+    },
   };
   componentWillMount() {
     // this.form[7].list[2].selected = 'selected'
     this.getDecreaseStatus();
+    this.getProductName();
   }
 
   componentDidMount() {
@@ -220,7 +278,7 @@ export default class OverdueRepay extends React.Component {
     this.getStatisticsMoney();
   }
 
-  pageChange = page => {
+  pageChange = (page) => {
     let params = {};
     params.formValue = this.state.formValue;
     params.page = page;
@@ -229,7 +287,7 @@ export default class OverdueRepay extends React.Component {
     this.setState({ loading: true }, () => this.getData());
   };
 
-  limitChange = limit => {
+  limitChange = (limit) => {
     let params = {};
     params.formValue = this.state.formValue;
     params.page = this.state.page;
@@ -238,23 +296,45 @@ export default class OverdueRepay extends React.Component {
     this.setState({ loading: true }, () => this.getData());
   };
 
+  getProductName = () => {
+    //产品管理-产品名称-下拉框
+    hnairOverdueRepayApi.productName().then((res) => {
+      if (res.data.code === "200") {
+        let selectList = [{ key: "全部", value: "" }];
+        for (let key in res.data.data) {
+          selectList.push({ key: res.data.data[key], value: key });
+        }
+        this.state.form.map((item, index) => {
+          if (item.key === "productName") {
+            this.state.form[index].list = selectList;
+            let forms = this.state.form;
+            this.setState({
+              form: forms,
+            });
+          }
+        });
+      } else {
+        Message.error(res.data.message);
+      }
+    });
+  };
   getDecreaseStatus = () => {
-    //产品管理-产品状态-下拉框
-    hnairOverdueRepayApi.commonYesOrNo().then(res => {
+    //产品管理-是否结清逾期-下拉框
+    hnairOverdueRepayApi.commonYesOrNo().then((res) => {
       if (res.data.code === "200") {
         let approvalStatus = res.data.data;
         if (approvalStatus !== null && approvalStatus !== undefined) {
           let amap = new Map(Object.entries(approvalStatus));
           for (let [k, v] of amap) {
             // state中form[6]里面list的key是中文, value是英文
-            this.state.form[7].list.push({
+            this.state.form[8].list.push({
               key: v,
-              value: k
+              value: k,
             });
           }
           let form = [...this.state.form];
           let formValue = { ...this.state.formValue };
-          this.state.form[7].list.map(item => {
+          this.state.form[8].list.map((item) => {
             if (item.key === "否") {
               formValue["isClear"] = item.value;
             }
@@ -263,7 +343,7 @@ export default class OverdueRepay extends React.Component {
             {
               refresh: this.state.refresh + 1,
               formValue,
-              form
+              form,
             },
             () => this.getData()
           );
@@ -278,12 +358,12 @@ export default class OverdueRepay extends React.Component {
     let params = { ...this.state.formValue };
     params.page = this.state.page;
     params.limit = this.state.limit;
-    hnairOverdueRepayApi.overdueDetailList(params).then(res => {
+    hnairOverdueRepayApi.overdueDetailList(params).then((res) => {
       if (res.data.code === "200") {
         this.setState({
           data: res.data.data.list,
           total: res.data.data.total,
-          loading: false
+          loading: false,
         });
       } else {
         Message.error(res.data.message);
@@ -293,11 +373,11 @@ export default class OverdueRepay extends React.Component {
 
   //获取逾期数据
   getStatisticsMoney = () => {
-    hnairOverdueRepayApi.statisticsMoney(this.state.formValue).then(res => {
+    hnairOverdueRepayApi.statisticsMoney(this.state.formValue).then((res) => {
       if (res.data.code === "200") {
         this.setState({
           totalData: res.data.data,
-          loading: false
+          loading: false,
         });
       } else {
         Message.error(res.data.message);
@@ -325,8 +405,10 @@ export default class OverdueRepay extends React.Component {
     store.dispatch(overdueFormValue(params));
     this.setState(
       {
-        loading: true
-      }, () => this.getData());
+        loading: true,
+      },
+      () => this.getData()
+    );
     this.getStatisticsMoney();
   }
 
@@ -334,7 +416,7 @@ export default class OverdueRepay extends React.Component {
     let params = { ...this.state.formValue };
     params.page = this.state.page;
     params.limit = this.state.limit;
-    hnairOverdueRepayApi.exportExcel(params).then(res => {
+    hnairOverdueRepayApi.exportExcel(params).then((res) => {
       let blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
       let fileName = decodeURI(
         res.headers["content-disposition"].split("=")[1]
@@ -354,7 +436,7 @@ export default class OverdueRepay extends React.Component {
         <SearchForm
           form={this.state.form}
           title="逾期明细"
-          onSubmit={formValue => this.onSubmit(formValue)}
+          onSubmit={(formValue) => this.onSubmit(formValue)}
           formValue={this.state.formValue}
         />
         <div style={styles.statisticData}>
@@ -376,8 +458,8 @@ export default class OverdueRepay extends React.Component {
           pageSize={this.state.limit}
           current={this.state.page}
           total={this.state.total}
-          pageChange={current => this.pageChange(current)}
-          limitChange={pageSize => this.limitChange(pageSize)}
+          pageChange={(current) => this.pageChange(current)}
+          limitChange={(pageSize) => this.limitChange(pageSize)}
           loadTable={this.state.loading}
           data={this.state.data}
         />

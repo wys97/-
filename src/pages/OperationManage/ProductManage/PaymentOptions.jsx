@@ -39,6 +39,7 @@ export default class PaymentOptions extends Component {
     { title: "36期", key: "isTerm36", width: 100, align: "center" }
   ];
   tables = [
+    { title: "是否内部员工", key: "isInternalEmployee", width: 100 },
     { title: "信用分下限", key: "minCreditScore", width: 100 },
     { title: "信用分上限", key: "maxCreditScore", width: 150 },
     { title: "金额下限(元)", key: "loanMinAmount", width: 100 },
@@ -155,6 +156,12 @@ export default class PaymentOptions extends Component {
             if (item.interestRate36Str === null) {
               (data = item),
                 (data.interestRate36Str = <Icon type="close" size="xs" />);
+            }
+            if(item.isInternalEmployee){
+              data.isInternalEmployee = '是'
+            }else{
+              data.isInternalEmployee = '否'
+
             }
             return data;
           });

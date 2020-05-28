@@ -16,6 +16,7 @@ export async function trend(data) {
   const params = {
     productNo: data.productNo,
     dateType: data.dateType,
+    isInternalEmployee: data.isInternalEmployee,
     dateEnd,
     dateBegin
   }
@@ -50,6 +51,7 @@ export async function reportData(data) {
   const params = {
     productNo: data.productNo,
     dateType: data.dateType,
+    isInternalEmployee: data.isInternalEmployee,
     dateEnd,
     dateBegin
   }

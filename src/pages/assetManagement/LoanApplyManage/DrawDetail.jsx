@@ -30,7 +30,7 @@ export default class Detail extends Component {
         <div className='contain-con'>
             <p style={{borderBottom: '1px solid #DDD', paddingBottom: '10px'}}>支用记录</p>
             <Form labelTextAlign={'right'}  {...formItemLayout} style={{marginTop: '30px'}}>
-              <Row>
+            <Row>
                 <Col span="8">
                   <FormItem style={styles.formItem} required label="支用总额:">
                     <p>{this.props.drawDetailInfo.applyAmountTotal}元</p>
@@ -38,12 +38,12 @@ export default class Detail extends Component {
                 </Col>
                 <Col span="8">
                   <FormItem style={styles.formItem} required label="借据贷款总金额:">
-                    <p>{this.props.drawDetailInfo.loanAmountLeftTotal}元</p>
+                    <p>{this.props.drawDetailInfo.loanAmountTotal}元</p>
                   </FormItem>
                 </Col>
                 <Col span="8">
                   <FormItem style={styles.formItem} required label="借据贷款总余额:">
-                    <p>{this.props.drawDetailInfo.loanAmountTotal}元</p>
+                    <p>{this.props.drawDetailInfo.loanAmountLeftTotal}元</p>
                   </FormItem>
                 </Col>
               </Row>

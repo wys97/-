@@ -14,7 +14,7 @@ export async function checkStatus() {
 /*
  * 还款对账明细查询
  */
-export async function checkRepayList({ checkId, checkDate,payProviderCode, checkStatus, page, limit }) {
+export async function checkRepayList({ checkId, checkDate, checkStatus,payProviderCode, page, limit }) {
     let checkDateBegin = '';
     let checkDateEnd = '';
     if (checkDate && checkDate.length > 0) {

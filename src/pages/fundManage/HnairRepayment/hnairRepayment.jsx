@@ -5,7 +5,7 @@ import HnairRepayDetailApi from '../../../api/FundManage/HnairRepayDetail'
 import {Message, Balloon, Icon} from '@alifd/next';
 import IceContainer from "@icedesign/container";
 import store from "../../../store";
-import { refundFormValue } from "../../../store/ScreeningWarehouse/loanTransaction/actions";
+import { debtFormValue } from "../../../store/ScreeningWarehouse/loanTransaction/actions";
 import 'moment/locale/zh-cn.js';
 import moment from 'moment';
 const Tooltip = Balloon.Tooltip;
@@ -24,18 +24,18 @@ function inject_unount(target) {
   };
 }
 @inject_unount
-export default class HnairRepayDetail extends Component {
+export default class HnairRepayment extends Component {
 
-  static displayName = 'HnairRepayDetail';
+  static displayName = 'HnairRepayment';
   static propTypes = {};
   static defaultProps = {};
 
   constructor(props) {
     super(props);
     this.state = {
-      formValue: store.getState().loanTransaction.refundDetail.formValue,
-      page: store.getState().loanTransaction.refundDetail.page,
-      limit: store.getState().loanTransaction.refundDetail.limit,
+      formValue: store.getState().loanTransaction.debtDetail.formValue,
+      page: store.getState().loanTransaction.debtDetail.page,
+      limit: store.getState().loanTransaction.debtDetail.limit,
       loading: false,
       total: 0,
       data: [],
@@ -76,31 +76,32 @@ export default class HnairRepayDetail extends Component {
               // { key: '还款失败', value: 'FAILED' },
             ],
         },
-        {label: '还款日期', key: 'repayBeginTime', type: 'range'},
-        // {
-        //   label: '集团内部员工', key: 'isInternalEmployee', type: 'select', list:
-        //     [
-        //       {key: '全部', value: ''},
-        //       { key: '是', value: true },
-        //       { key: '否', value: false },
-        //     ],
-        // },
+        {label: '还款日期', key: 'repayTime', type: 'range'},
+        {
+          label: '集团内部员工', key: 'isInternalEmployee', type: 'select', list:
+            [
+              {key: '全部', value: ''},
+              { key: '是', value: true },
+              { key: '否', value: false },
+            ],
+        },
         {label: '代扣渠道', key: 'payChannelName', type: ''},
-        {label: '登记时间', key: 'registryTime', type: 'range'},
+        {label: '登记时间', key: 'registrationTime', type: 'range'},
 
       ],
     };
     store.subscribe(() => {
       this.setState({
-        formValue: store.getState().loanTransaction.refundDetail.formValue,
-        page: store.getState().loanTransaction.refundDetail.page,
-        limit: store.getState().loanTransaction.refundDetail.limit
+        formValue: store.getState().loanTransaction.debtDetail.formValue,
+        page: store.getState().loanTransaction.debtDetail.page,
+        limit: store.getState().loanTransaction.debtDetail.limit
       });
     });
   }
 
   table = [
-    {title: '交易流水号', key: 'repayRecordId', width: 100, cell: true, path: '/fundManage/HnairRepayDetailInfo'},
+    {title: '交易流水号', key: 'repayRecordId', width: 100},
+    {title: '借据编号', key: 'dueId', width: 100},
     {title: '客户名称', key: 'customerName', width: 100},
     {title: '证件号', key: 'identityNo', width: 120},
     {title: '手机号', key: 'phone', width: 100},
@@ -109,15 +110,15 @@ export default class HnairRepayDetail extends Component {
     {title: '还利息(元)', key: 'repayInterest', width: 100, align: 'right'},
     {title: '还罚息(元)', key: 'repayFine', width: 100, align: 'right'},
     {title: '还违约金(元)', key: 'repayDamage', width: 100, align: 'right'},
-    {title: '扣款方式', key: 'debitMethod', width: 100},
-    {title: '还款类型', key: 'repayType', width: 100},
-    {title: '还款状态', key: 'repayStatus', width: 260},
-    {title: '银行卡号', key: 'bankCardNo', width: 160},
-    // {title: '还款方式', key: 'repayMethodText', width: 100},
+    {title: '扣款方式', key: 'debitMethodText', width: 100},
+    {title: '还款类型', key: 'repayTypeText', width: 100},
+    {title: '还款状态', key: 'repayStatusText', width: 200},
+    {title: '银行卡号', key: 'accountNo', width: 160},
+    {title: '还款方式', key: 'repayMethodText', width: 100},
     {title: '代扣渠道', key: 'payChannelName', width: 100},
-    // {title: '集团内部员工', key: 'isInternalEmployeeText', width: 100},
-    {title: '登记时间', key: 'registryTime', width: 140},
-    {title: '还款时间', key: 'repayBeginTime', width: 140},
+    {title: '集团内部员工', key: 'isInternalEmployeeText', width: 100},
+    {title: '登记时间', key: 'registrationTime', width: 140},
+    {title: '还款时间', key: 'repayTime', width: 140},
   ];
 
   toolBtn = [
@@ -142,7 +143,7 @@ export default class HnairRepayDetail extends Component {
   };
 
   componentDidMount = () => {
-    // this.getData()
+    this.getData()
   };
 
   getRecentMonths = () =>{
@@ -151,11 +152,10 @@ export default class HnairRepayDetail extends Component {
           let arr = [];
           arr.push(moment(res.data.data.beginDate),moment(res.data.data.endDate));
           this.state.form.map((item, index) => {
-
-            if (item.key === 'repayBeginTime') {
+            if (item.key === 'repayTime') {
             let params = {};
             params.formValue = this.state.formValue;
-            params.repayBeginTime = arr;
+            params.repayTime = arr;
             params.page = this.state.page;
             params.limit = this.state.limit;
            
@@ -244,7 +244,7 @@ export default class HnairRepayDetail extends Component {
     params.formValue = this.state.formValue;
     params.page = page;
     params.limit = this.state.limit;
-    store.dispatch(refundFormValue(params));
+    store.dispatch(debtFormValue(params));
     this.setState({ loading: true }, () => this.getData());
   };
 
@@ -253,7 +253,7 @@ export default class HnairRepayDetail extends Component {
     params.formValue = this.state.formValue;
     params.page = this.state.page;
     params.limit = limit;
-    store.dispatch(refundFormValue(params));
+    store.dispatch(debtFormValue(params));
     this.setState({ loading: true }, () => this.getData());
   };
   
@@ -261,7 +261,7 @@ export default class HnairRepayDetail extends Component {
     let params = {...this.state.formValue};
     params.page = this.state.page;
     params.limit = this.state.limit;
-    HnairRepayDetailApi.loanPayRepayList(params)
+    HnairRepayDetailApi.getDateList(params)
       .then((res) => {
         if (res.data.code === '200') {
           Object.keys(res.data.data.list).map(item => {
@@ -287,7 +287,7 @@ export default class HnairRepayDetail extends Component {
     params.formValue = formValue;
     params.page = 1;
     params.limit = 10;
-    store.dispatch(refundFormValue(params));
+    store.dispatch(debtFormValue(params));
     this.setState({
       loading: true,
     }, () => this.getData());
@@ -295,7 +295,9 @@ export default class HnairRepayDetail extends Component {
 
   exportExcel = () => {
     let params = {...this.state.formValue};
-    HnairRepayDetailApi.exportExcel(params)
+    params.page = this.state.page;
+    params.limit = this.state.limit;
+    HnairRepayDetailApi.exportExcelList(params)
       .then((res) => {
         let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'});
         let fileName = decodeURI(res.headers['content-disposition'].split('=')[1]);
@@ -307,10 +309,10 @@ export default class HnairRepayDetail extends Component {
       });
   };
 
-  render() {
+  render() { 
     return (
       <div>
-        <SearchForm form={this.state.form} title='还款明细' formValue={this.state.formValue} onSubmit={(formValue) => this.onSubmit(formValue)}/>
+        <SearchForm form={this.state.form} title='还款借据明细' formValue={this.state.formValue} onSubmit={(formValue) => this.onSubmit(formValue)}/>
         <IceContainer>
           <div className='contain-con'>
             <DataTable col={this.table} toolBtn={this.toolBtn} toolBtnFn={this.toolBtnFn} lineBtn={this.lineBtn} lineBtnFn={this.lineBtnFn}

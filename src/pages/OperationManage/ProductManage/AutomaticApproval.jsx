@@ -43,7 +43,7 @@ export default class AutomaticApproval extends Component {
     productManageApi.autoApprovalDetail(this.state.productNo).then(res => {
       if (res.data.code === "200") {
         let data = res.data.data;
-        if ((data.loanHistoryOverdue = 0)) {
+        if (data.loanHistoryOverdue == 0) {
           data.loanHistoryOverdue = "人工审批";
         } else {
           data.loanHistoryOverdue = "自动审批";

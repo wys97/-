@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import IceContainer from '@icedesign/container';
 import { Button, Dialog, Field, Form, Grid, Input, Message, Select, DatePicker } from '@alifd/next';
-import SearchForm from '../../components/SearchForm';
-import DataTable from '../../dataTable';
-import feeWaiverManageApi from '../../../api/PostLendingManage/FeeWaiverManage';
-import HnairOfflineRegisterApi from '../../../api/PostLendingManage/HnairOfflineRegister'
-import moment from 'moment';
-import { connectAdvanced } from 'react-redux';
+import SearchForm from '../components/SearchForm';
+import DataTable from '../dataTable';
+import HnairOfflineRegisterApi from '../../api/PostLendingManage/HnairOfflineRegister'
+import axios from '../../api/postponeManage/postponeManage'
+
 
 
 const { Row, Col } = Grid;
@@ -16,9 +15,9 @@ const formItemLayout = {
 };
 const FormItem = Form.Item;
 
-export default class HnairOfflineRegisterAdd extends Component {
+export default class PostponeAdd extends Component {
 
-    static displayName = 'HnairOfflineRegisterAdd';
+    static displayName = 'PostponeAdd';
     static propTypes = {};
     static defaultProps = {};
 
@@ -29,7 +28,7 @@ export default class HnairOfflineRegisterAdd extends Component {
         this.goBack = this.goBack.bind(this);
         this.state = {
             getRepayType: {},
-            selectRepayType: {},  //还款方式下拉,
+            selectRepayType: {},  //展期期数下拉,
             repayRecordId: '',   //登记流水号
             id: this.props.location && this.props.location.state && this.props.location.state.name,
             type: this.props.location
@@ -42,21 +41,21 @@ export default class HnairOfflineRegisterAdd extends Component {
             limit: 10,
             loading: false,
             data: [],
-            value:'',
+            value: '',
         }
     }
 
     componentWillMount = () => {
-        this.getSelectRepayType();
         this.getRepayDetail()
     };
 
     getRepayDetail = () => {
         if (this.state.type === 'update') {
             // 修改, 加载详情数据
-            HnairOfflineRegisterApi.detail(this.state.id).then((res) => {
+            axios.getDetail(this.state.id).then((res) => {
                 if (res.data.code === '200') {
                     this.field.setValues(res.data.data);
+                    this.getSelectRepayType(res.data.data.dueId)
                 } else {
                     Message.error(res.data.message);
                 }
@@ -85,12 +84,14 @@ export default class HnairOfflineRegisterAdd extends Component {
         if (e !== null) {
             return;
         }
-        console.log(v)
-        HnairOfflineRegisterApi.offlineAddSave(v).then((res) => {
+        let data = {
+            dueId: v.dueId,
+            periodNum: v.periodNum,
+            interestRate: v.interestRate
+        }
+        axios.offlineAddSave(data).then((res) => {
             if (res.data.code === '200') {
-                this.state.repayRecordId = res.data.data.repayRecordId
                 Message.success(res.data.message);
-
                 this.goBack();
             } else {
                 Message.error(res.data.message);
@@ -102,12 +103,16 @@ export default class HnairOfflineRegisterAdd extends Component {
         if (e !== null) {
             return;
         }
-        HnairOfflineRegisterApi.offlineUpdateSave(v).then((res) => {
+        let data = {
+            rolloverApplyId: this.state.id,
+            interestRate: v.repayAmount,
+            periodNum: v.repayType,
+        }
+        axios.offlineUpdateSave(data).then((res) => {
             if (res.data.code === '200') {
                 this.setState({
                     refresh: this.state.refresh + 1
                 });
-                // this.getRepayDetail()
                 this.props.history.go(-1)
                 Message.success(res.data.message);
             } else {
@@ -151,8 +156,8 @@ export default class HnairOfflineRegisterAdd extends Component {
         })
     };
 
-    getSelectRepayType = () => { //还款方式-下拉
-        HnairOfflineRegisterApi.repayType()
+    getSelectRepayType = (id) => { //展期期数-下拉
+        axios.repayType(id)
             .then((res) => {
                 if (res.data.code === '200') {
                     this.setState({
@@ -170,32 +175,7 @@ export default class HnairOfflineRegisterAdd extends Component {
         })
     };
 
-  getLoneDueByPaidDate = (v) => {
-    console.log(v)
-    var dueId = this.field.getValue("dueId");
-    var paidDate = new Date(v).Format('yyyy-MM-dd');
-    this.setState({
-        value:paidDate
-    })
-    if (paidDate === '1970-01-01'){
-      this.selectDue(dueId);
-      return;
-    }
-    HnairOfflineRegisterApi.getLoneDueByPaidDate(dueId,paidDate).then((res) => {
-      if (res.data.code === '200') {
-        this.setState({
-          visible: false,
-          selectRepayType: res.data.data.repayTypes
-        });
-        this.field.setValues(res.data.data);
-      } else {
-        Message.error(res.data.message);
-        this.setState({
-            value:'',
-        })
-      }
-    });
-  }
+
 
     form = [{
         label: '借据号',
@@ -248,12 +228,12 @@ export default class HnairOfflineRegisterAdd extends Component {
     {
         title: '手机号',
         key: 'phone',
-        width: 150
+        width: 130
     },
     {
         title: '证件号',
         key: 'identityNo',
-        width: 150
+        width: 130
     },
     {
         title: '放款金额 (元) ',
@@ -263,7 +243,7 @@ export default class HnairOfflineRegisterAdd extends Component {
     {
         title: '剩余应还总额 (元) ',
         key: 'unpaidAmount',
-        width: 200
+        width: 160
     },
     {
         title: '放款日期',
@@ -275,23 +255,16 @@ export default class HnairOfflineRegisterAdd extends Component {
     lineClickFn = (row, index) => {
         this.selectDue(row.dueId);
     }
-    //借据号查询详情
+    //选择借据号查询用户信息
     selectDue = (id) => {
-        HnairOfflineRegisterApi.selectDue(id).then((res) => {
+        axios.getLoanInfo(id).then((res) => {
             if (res.data.code === '200') {
                 this.setState({
                     visible: false,
-                    selectRepayType: res.data.data.repayTypes
                 });
                 this.field.setValues(res.data.data);
-                if(res.data.data.isHsLoanDue){
-                    let time =new Date();
-                    let value = moment(time,'YYYY-MM-DD');
-                    let paramValue = value.format('YYYY-MM-DD')
-                    this.setState({
-                        value:paramValue
-                    })
-                }
+                this.getSelectRepayType(id);
+
             } else {
                 Message.error(res.data.message);
             }
@@ -320,14 +293,14 @@ export default class HnairOfflineRegisterAdd extends Component {
                     <IceContainer>
                         <Form labelTextAlign={'right'}  {...formItemLayout} field={this.field}>
                             <div className="CustomerTabTitle" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <h3 style={{ marginTop: '-4px' }}>新增线下还款</h3>
+                                <h3 style={{ marginTop: '-4px' }}>新增展期</h3>
                                 <Button type="normal" style={{ borderRadius: '5px' }} onClick={this.goBack}>返回</Button>
                             </div>
                             <div className='contain-con'>
                                 <div style={{ marginTop: '30px' }}>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="登记流水号:">
+                                            <FormItem style={styles.formItem} label="展期编号:">
                                                 {/* <p>{this.field.getValue("repayRecordId")}<span> [自动生成] </span></p> */}
                                                 <p>{this.state.repayRecordId}<span> [自动生成] </span></p>
                                             </FormItem>
@@ -350,7 +323,7 @@ export default class HnairOfflineRegisterAdd extends Component {
                                     <Row>
                                         <Col span="12">
                                             <FormItem style={styles.formItem} label="产品名称:">
-                                                <p>{this.field.getValue("productNo")}</p>
+                                                <p>{this.field.getValue("productName")}</p>
                                             </FormItem>
                                         </Col>
                                     </Row>
@@ -360,6 +333,9 @@ export default class HnairOfflineRegisterAdd extends Component {
                                                 <p>{this.field.getValue("customerName")}</p>
                                             </FormItem>
                                         </Col>
+
+                                    </Row>
+                                    <Row>
                                         <Col span="12">
                                             <FormItem style={styles.formItem} label="手机号:">
                                                 <p>{this.field.getValue("phone")}</p>
@@ -376,98 +352,70 @@ export default class HnairOfflineRegisterAdd extends Component {
                                     <Row>
                                         <Col span="12">
                                             <FormItem style={styles.formItem} label="放款金额:">
-                                                <p>{this.field.getValue("loanAmount")}</p>
+                                                <p>{this.field.getValue("loanAmount")}<span>元</span></p>
                                             </FormItem>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="剩余应还总额:">
-                                                <p>{this.field.getValue("unpaidAmount")}</p>
+                                            <FormItem style={styles.formItem} label="原期次:">
+                                                <p>{this.field.getValue("originalPeriods")}</p>
                                             </FormItem>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="实际还款日期:" required requiredMessage="请选择实际还款日期">
-                                                <DatePicker name="paidDate" value={this.state.value} onChange={this.getLoneDueByPaidDate} disabled={this.field.getValue("isHsLoanDue")}/>
+                                            <FormItem style={styles.formItem} label="还款方式:">
+                                                <p>{this.field.getValue("repayMethodText")}</p>
                                             </FormItem>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem labelTextAlign='right' style={styles.formItem} label="还款类型:" required
-                                                requiredMessage="请选择状态">
-                                                <Select followTrigger name="repayType" style={styles.formInputBorder}>
+                                            <FormItem style={styles.formItem} label="剩余未还本金:">
+                                                <p>{this.field.getValue("unpaidPrincipal")}<span>元</span></p>
+                                            </FormItem>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span="12">
+                                            <FormItem style={styles.formItem} label="待还利息:">
+                                                <p>{this.field.getValue("unpaidInterest")}<span>元</span></p>
+                                            </FormItem>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span="12">
+                                            <FormItem style={styles.formItem} label="待还罚息:">
+                                                <p>{this.field.getValue("unpaidFine")}<span>元</span></p>
+                                            </FormItem>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span="12">
+                                            <FormItem style={styles.formItem} requiredMessage="展期利率(月)" format="number"
+                                                formatMessage="请输入数字" label="展期利率(月):">
+                                                <Input style={styles.formInputBorder} name="interestRate" placeholder="" /> %
+                                            </FormItem>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span="12">
+                                            <FormItem labelTextAlign='right' style={styles.formItem} label="展期期数:"
+                                                requiredMessage="请选择期数">
+                                                <Select followTrigger name="periodNum" style={styles.formInputBorder}>
                                                     {
-                                                        Object.keys(this.state.selectRepayType)
+                                                        Object.values(this.state.selectRepayType)
                                                             .map((key, index) => {
-                                                                return <Select.Option key={index} value={key}>{this.state.selectRepayType[key]}</Select.Option>;
+                                                                return <Select.Option key={index} value={key}></Select.Option>
                                                             })
                                                     }
                                                 </Select>
                                             </FormItem>
                                         </Col>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="还款方式:">
-                                                <p>线下还款</p>
-                                            </FormItem>
-                                        </Col>
                                     </Row>
+
                                     <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="逾期应还总额:">
-                                                <p>{this.field.getValue("overdueAmount")}<span>元</span>
-                                                </p>
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="当期应还总额:">
-                                                <p>{this.field.getValue("currentAmount")}<span>元</span>
-                                                </p>
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="提前应还总额:">
-                                                <p>{this.field.getValue("prepayAmount")}<span>元</span>
-                                                </p>
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} required requiredMessage="请填写还款金额" format="number"
-                                                formatMessage="请输入数字" label="还款金额:">
-                                                <Input style={styles.formInputBorder} name="repayAmount" placeholder="" /> 元
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="24">
-                                            <FormItem style={styles.formItem} label="备注:">
-                                                <Input.TextArea style={styles.formTextArea} placeholder="" name="remark" />
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="操作员:">
-                                                {this.field.getValue("operator")}
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="更新日期:">
-                                                {this.field.getValue("modifyTime")}
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    {/* <Row>
                                         <Col span="12">
                                             <FormItem style={styles.formItem} label="创建人员:">
                                                 <p>{this.field.getValue("creatorName")}</p>
@@ -487,10 +435,10 @@ export default class HnairOfflineRegisterAdd extends Component {
                                         </Col>
                                         <Col span="12">
                                             <FormItem style={styles.formItem} label="修改时间:">
-                                                <p>{this.field.getValue("modifyTime")}</p>
+                                                <p>{this.field.getValue("updateTime")}</p>
                                             </FormItem>
                                         </Col>
-                                    </Row> */}
+                                    </Row>
                                 </div>
                             </div>
                             <Form.Submit validate type="primary" style={styles.saveButton}
@@ -524,14 +472,14 @@ export default class HnairOfflineRegisterAdd extends Component {
                     <IceContainer>
                         <Form labelTextAlign={'right'}  {...formItemLayout} field={this.field}>
                             <div className="CustomerTabTitle" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <h3 style={{ marginTop: '-4px' }}>修改线下还款</h3>
+                                <h3 style={{ marginTop: '-4px' }}>修改展期</h3>
                                 <Button type="normal" style={{ borderRadius: '5px' }} onClick={this.goBack}>返回</Button>
                             </div>
                             <div className='contain-con'>
                                 <div style={{ marginTop: '30px' }}>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="登记流水号:">
+                                            <FormItem style={styles.formItem} label="展期编号:">
                                                 <p>{this.field.getValue("repayRecordId")}<span> [自动生成] </span></p>
                                             </FormItem>
                                         </Col>
@@ -563,6 +511,8 @@ export default class HnairOfflineRegisterAdd extends Component {
                                                 <p>{this.field.getValue("customerName")}</p>
                                             </FormItem>
                                         </Col>
+                                    </Row>
+                                    <Row>
                                         <Col span="12">
                                             <FormItem style={styles.formItem} label="手机号:">
                                                 <p>{this.field.getValue("phone")}</p>
@@ -585,26 +535,35 @@ export default class HnairOfflineRegisterAdd extends Component {
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="剩余应还总额:">
-                                                <p>{this.field.getValue("unpaidAmount")}</p>
+                                            <FormItem style={styles.formItem} label="原期次:">
+                                                <p>{this.field.getValue("originalPeriods")}</p>
                                             </FormItem>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="实际还款日期:" required requiredMessage="请选择实际还款日期" >
-                                              <DatePicker name="paidDate" onChange={this.getLoneDueByPaidDate} disabled={this.field.getValue("isHsLoanDue")}/>
+                                            <FormItem style={styles.formItem} label="还款方式:">
+                                                <p>{this.field.getValue("repayMethodText")}</p>
                                             </FormItem>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} required label="还款类型:">
-                                                <Select followTrigger name="repayType" style={styles.formInputBorder}>
+                                            <FormItem style={styles.formItem} requiredMessage="展期利率(月)" format="number"
+                                                formatMessage="请输入数字" label="展期利率(月):">
+                                                <Input style={styles.formInputBorder} name="repayAmount" placeholder="" value={this.field.getValue("interestRate") && this.field.getValue("interestRate")} /> %
+                                            </FormItem>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span="12">
+                                            <FormItem labelTextAlign='right' style={styles.formItem} label="展期期数:"
+                                                requiredMessage="请选择状态">
+                                                <Select followTrigger name="repayType" style={styles.formInputBorder} placeholder={JSON.stringify(this.field.getValue("rolloverPeriods"))}>
                                                     {
-                                                        Object.keys(this.state.selectRepayType)
+                                                        Object.values(this.state.selectRepayType)
                                                             .map((key, index) => {
-                                                                return <Select.Option key={index} value={key}>{this.state.selectRepayType[key]}</Select.Option>;
+                                                                return <Select.Option key={index} value={key}></Select.Option>
                                                             })
                                                     }
                                                 </Select>
@@ -613,48 +572,25 @@ export default class HnairOfflineRegisterAdd extends Component {
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="逾期应还总额:">
-                                                <p>{this.field.getValue("overdueAmount")}<span>元</span>
-                                                </p>
+                                            <FormItem style={styles.formItem} label="剩余未还本金:">
+                                                <p>{this.field.getValue("unpaidPrincipal")}<span>元</span></p>
                                             </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="当期应还总额:">
-                                                <p>{this.field.getValue("currentAmount")}<span>元</span>
-                                                </p>
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} label="提前应还总额:">
-                                                <p>{this.field.getValue("prepayAmount")}<span>元</span>
-                                                </p>
-                                            </FormItem>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col span="12">
-                                            <FormItem style={styles.formItem} required requiredMessage="请填写还款金额" format="number"
-                                                formatMessage="请输入数字" label="还款金额:">
-                                                <Input style={styles.formInputBorder} name="repayAmount" placeholder="" /> 元
-                      </FormItem>
                                         </Col>
                                     </Row>
 
                                     <Row>
-                                        <Col span="24">
-                                            <FormItem style={styles.formItem} label="备注:">
-                                                <Input.TextArea style={styles.formTextArea} placeholder="" name="remark" />
+                                        <Col span="12">
+                                            <FormItem style={styles.formItem} label="待还利息:">
+                                                <p>{this.field.getValue("unpaidInterest")}<span>元</span>
+                                                </p>
                                             </FormItem>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col span="12">
-                                            <FormItem style={styles.formItem} label="审批状态:">
-                                                <p>{this.field.getValue("approvalStatus")}</p>
+                                            <FormItem style={styles.formItem} label="待还罚息:">
+                                                <p>{this.field.getValue("unpaidFine")}<span>元</span>
+                                                </p>
                                             </FormItem>
                                         </Col>
                                     </Row>
@@ -678,7 +614,7 @@ export default class HnairOfflineRegisterAdd extends Component {
                                         </Col>
                                         <Col span="12">
                                             <FormItem style={styles.formItem} label="修改时间:">
-                                                <p>{this.field.getValue("modifyTime")}</p>
+                                                <p>{this.field.getValue("updateTime")}</p>
                                             </FormItem>
                                         </Col>
                                     </Row>

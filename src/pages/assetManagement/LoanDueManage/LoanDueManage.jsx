@@ -9,13 +9,13 @@ import { iouFormValue } from "../../../store/ScreeningWarehouse/loanTransaction/
 function inject_unount(target) {
   // 改装componentWillUnmount，销毁的时候记录一下
   let next = target.prototype.componentWillUnmount;
-  target.prototype.componentWillUnmount = function() {
+  target.prototype.componentWillUnmount = function () {
     if (next) next.call(this, ...arguments);
     this.unmount = true;
   };
   // 对setState的改装，setState查看目前是否已经销毁
   let setState = target.prototype.setState;
-  target.prototype.setState = function() {
+  target.prototype.setState = function () {
     if (this.unmount) return;
     setState.call(this, ...arguments);
   };
@@ -90,7 +90,20 @@ export default class LoanDueManage extends Component {
       key: "tradeType",
       type: "select",
       list: [{ key: "全部", value: "" }]
-    }
+    },
+    {
+      label: '集团内部员工', key: 'isInternalEmployee', type: 'select', list:
+        [
+          { key: '全部', value: '' },
+          { key: '是', value: true },
+          { key: '否', value: false },
+        ],
+    },
+    { label: '代扣渠道', key: 'payChannelName', type: '' },
+    {
+      label: '展期状态', key: 'rolloverStatus', type: 'select',
+      list: [{ key: "全部", value: "" }]
+    },
   ];
 
   table = [
@@ -177,6 +190,36 @@ export default class LoanDueManage extends Component {
       width: 120
     },
     {
+      title: "还款方式",
+      key: "repayMethodText",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "银行卡号",
+      key: "bankCardNo",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "代付渠道",
+      key: "payChannelName",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "集团内部员工",
+      key: "isInternalEmployeeText",
+      align: "center",
+      width: 120
+    },
+    { 
+      title: "展期状态",
+      key: "dueRolloverStatusText",
+      align: "center",
+      width: 120
+    },
+    {
       title: "起始时间",
       key: "valueDate",
       width: 100
@@ -192,7 +235,7 @@ export default class LoanDueManage extends Component {
       name: "导出",
       type: "export",
       icon: "export",
-      permission: "finance:day-settle:day-settle:export"
+      permission: "asset:asset:loan-due:menu"
     }
   ];
 
@@ -204,6 +247,7 @@ export default class LoanDueManage extends Component {
 
   componentWillMount() {
     this.getDueStatus();
+    this.getDeferStatus();
     this.getTradeTypeEnum();
   }
 
@@ -221,6 +265,29 @@ export default class LoanDueManage extends Component {
           for (let [k, v] of amap) {
             // state中form[7]里面list的key是中文, value是英文
             this.form[7].list.push({
+              key: v,
+              value: k
+            });
+          }
+          this.setState({
+            refresh: this.state.refresh + 1
+          });
+        }
+      } else {
+        Message.error(res.data.message);
+      }
+    });
+  };
+  getDeferStatus = () => {
+    //展期状态-下拉框
+    loanDueManageApi.deferStatus().then(res => {
+      if (res.data.code === "200") {
+        let defer = res.data.data;
+        if (defer !== null && defer !== undefined) {
+          let amap = new Map(Object.entries(defer));
+          for (let [k, v] of amap) {
+            // state中form[12]里面list的key是中文, value是英文
+            this.form[12].list.push({
               key: v,
               value: k
             });

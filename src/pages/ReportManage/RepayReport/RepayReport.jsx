@@ -12,11 +12,23 @@ export default class RepayReport extends Component {
     this.state = {
       oneChartValue: {},
       twoChartValue: {},
+      isInternalEmployeeType: [
+        { label: "全部员工", value: "" },
+        {
+          label: "是",
+          value: true,
+        },
+        {
+          label: "否",
+          value: false,
+        },
+      ],
+      isInternalEmployee: null,
       // 放款报表
 
       date: [],
       dateType: "DAY",
-      productNo: ""
+      productNo: "",
     };
   }
 
@@ -55,6 +67,7 @@ export default class RepayReport extends Component {
     let params = {};
     params.productNo = this.state.productNo;
     params.dateType = this.state.dateType;
+    params.isInternalEmployee = this.state.isInternalEmployee;
     params.date = this.state.date;
     repayReportApi.reportData(params)
       .then((res) => {
@@ -81,6 +94,7 @@ export default class RepayReport extends Component {
     let params = {};
     params.productNo = this.state.productNo;
     params.dateType = this.state.dateType;
+    params.isInternalEmployee = this.state.isInternalEmployee;
     params.date = this.state.date;
     repayReportApi.trend(params)
       .then((res) => {
@@ -113,13 +127,16 @@ export default class RepayReport extends Component {
   }
 
   onClick = () => { //重置按钮
-    this.setState({ date: [], productNo: "", dateType: "DAY" }, () =>
+    this.setState({ date: [], productNo: "", dateType: "DAY",isInternalEmployee:""  }, () =>
       this.getTwo()
     );
   }
 
   handChange = value => { //放款统计 选择产品
     this.setState({ productNo: value }, () => this.getTwo());
+  }
+  isInternalEmployeeChange = value => { //放款统计 选择产品
+    this.setState({ isInternalEmployee: value }, () => this.getTwo());
   }
 
   onOk = val => { //日期选择
@@ -137,12 +154,15 @@ export default class RepayReport extends Component {
   }
 
   onClickOne = () => { //未来待还统计 重置按钮
-    this.setState({ date: [], productNo: "", dateType: "DAY" }, () =>
+    this.setState({ date: [], productNo: "", dateType: "DAY",isInternalEmployee:"" }, () =>
       this.getData()
     );
   }
   handChangeOne = value => { //未来待还统计 选择产品
     this.setState({ productNo: value }, () => this.getData());
+  }
+  isInternalEmployeeChangeOne = value => { //未来待还统计 选择产品
+    this.setState({ isInternalEmployee: value }, () => this.getData());
   }
   onOkOne = val => { //未来待还统计 日期选择
     this.setState({ date: val }, () => this.getData());
@@ -182,6 +202,14 @@ export default class RepayReport extends Component {
                 dataSource={this.state.selectType}
                 onChange={this.handChange}
               />
+              <Select
+                followTrigger
+                name="isInternalEmployee"
+                style={{ marginRight: "10px" }}
+                defaultValue={{ value: "", label: "是否集团内部员工" }}
+                dataSource={this.state.isInternalEmployeeType}
+                onChange={this.isInternalEmployeeChange}
+              />
               <span>
                 <Button
                   type={this.state.dateType === "DAY" ? "primary" : "normal"}
@@ -217,7 +245,7 @@ export default class RepayReport extends Component {
             data={this.state.oneChartValue}
             scale={scale}
             padding="auto"
-            onTooltipChange={ev => {
+            onTooltipChange={(ev) => {
               let items = ev.items; // tooltip显示的项
               items[0].value = items[0].point._origin.还款金额 + "元";
             }}
@@ -233,7 +261,7 @@ export default class RepayReport extends Component {
                 "type",
                 () => {
                   return "#60A2FF";
-                }
+                },
               ]}
             />
           </Chart>
@@ -258,6 +286,14 @@ export default class RepayReport extends Component {
                 defaultValue={{ value: "", label: "全部产品" }}
                 dataSource={this.state.selectType}
                 onChange={this.handChangeOne}
+              />
+              <Select
+                followTrigger
+                name="isInternalEmployee"
+                style={{ marginRight: "10px" }}
+                defaultValue={{ value: "", label: "是否集团内部员工" }}
+                dataSource={this.state.isInternalEmployeeType}
+                onChange={this.isInternalEmployeeChangeOne}
               />
               <span>
                 <Button
@@ -294,7 +330,7 @@ export default class RepayReport extends Component {
             data={this.state.twoChartValue}
             scale={scale}
             padding="auto"
-            onTooltipChange={ev => {
+            onTooltipChange={(ev) => {
               let items = ev.items; // tooltip显示的项
               items[0].value = items[0].point._origin.待还金额 + "元";
             }}
@@ -310,7 +346,7 @@ export default class RepayReport extends Component {
                 "type",
                 () => {
                   return "#60A2FF";
-                }
+                },
               ]}
             />
           </Chart>

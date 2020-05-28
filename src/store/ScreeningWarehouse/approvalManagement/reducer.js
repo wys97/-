@@ -24,6 +24,14 @@ const stateInit = {
     page: 1,
     limit: 10
   },
+  postponeApprove: {
+    //展期审批-默认初始数据
+    formValue: {
+      approvalStatus: "APPROVING"
+    },
+    page: 1,
+    limit: 10
+  },
   feeWaiver: {
     //息费减免审批-默认初始数据
     formValue: {
@@ -66,6 +74,16 @@ export default (state = stateInit, action) => {
   if (action.type === constants.OFFLINE_REPAY) {
     return Object.assign({}, state, {
       offlineRepay: {
+        formValue: action.value.formValue,
+        page: action.value.page,
+        limit: action.value.limit
+      }
+    });
+  }
+  //展期审批-页面数据修改
+  if (action.type === constants.POSTPONE_APPROVE) {
+    return Object.assign({}, state, {
+      postponeApprove: {
         formValue: action.value.formValue,
         page: action.value.page,
         limit: action.value.limit
@@ -122,6 +140,18 @@ export default (state = stateInit, action) => {
       //线下还款登记审批-初始化
       return Object.assign({}, state, {
         offlineRepay: {
+          formValue: {
+            approvalStatus: "APPROVING"
+          },
+          page: 1,
+          limit: 10
+        }
+      });
+    }
+    if (action.path == "/approvalManage/postponeApprove") {
+      //展期审批-初始化
+      return Object.assign({}, state, {
+        postponeApprove: {
           formValue: {
             approvalStatus: "APPROVING"
           },

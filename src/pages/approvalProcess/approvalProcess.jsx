@@ -215,7 +215,7 @@ export default class ApprovalProcess extends Component {
 
     componentDidMount() {
         this.getData();
-        
+
     }
 
 
@@ -263,7 +263,7 @@ export default class ApprovalProcess extends Component {
     };
 
 
-    
+
     getListAdminOperator = (params) => {
         //用户列表-下拉框
         ApprovalProcessApi.listAdminOperator(params).then(res => {
@@ -301,13 +301,13 @@ export default class ApprovalProcess extends Component {
     };
     //获取列表数据
     getData = () => {
-     
+
         let params = { ...this.state.formValue };
         params.page = this.state.page;
         params.limit = this.state.limit;
         ApprovalProcessApi.approvalList(params).then(res => {
+
             if (res.data.code === "200") {
-                console.log(res)
                 let data = res.data.data.list
                 data.map((item, index) => {
                     if (item.currentLevel === 1) {
@@ -319,7 +319,7 @@ export default class ApprovalProcess extends Component {
                     }
                     return data
                 })
-            
+
                 this.setState({
                     data: data,
                     total: res.data.data.total,
@@ -328,7 +328,7 @@ export default class ApprovalProcess extends Component {
                     loading: false,
                     selectedKeys:[],
                     removeChecked:false
-                
+
                 });
             } else {
                 Message.error(res.data.message);
@@ -348,7 +348,7 @@ export default class ApprovalProcess extends Component {
                 },
                 () => this.getData()
             );
-         
+
     }
 
     record = records => {
@@ -360,7 +360,7 @@ export default class ApprovalProcess extends Component {
             this.setState({
                 selectedKeys
             });
-        
+
     };
 
     onClose = flag => {
@@ -391,7 +391,7 @@ export default class ApprovalProcess extends Component {
 
             if (res.data.code === "200") {
                 this.setState(
-                    {   
+                    {
                         removeChecked:true,
                         loading: true,
                     },

@@ -32,6 +32,16 @@ export const offlineRepay = value => {
     value
   }
 }
+/**
+ * 生成 OFFLINE_REPAY 动作的函数
+ * @param {String} value 展期审批-筛查参数与页码 
+ */
+export const postponeApprove = value => {
+  return {
+    type: constants.POSTPONE_APPROVE,
+    value
+  }
+}
 
 /**
  * 生成 FEE_WAIVER 动作的函数

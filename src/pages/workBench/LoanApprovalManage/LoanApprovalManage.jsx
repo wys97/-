@@ -73,10 +73,28 @@ export default class LoanApprovalManage extends Component {
       key: 'phone',
       type: '',
     },
+    // {
+    //   label: '合作机构名称',
+    //   key: 'partnerName',
+    //   type: '',
+    // },
     {
-      label: '合作机构名称',
-      key: 'partnerName',
-      type: '',
+      label: '集团内部员工',
+      key: 'isInternalEmployee',
+      type: 'select',
+      list: [{
+        key: '全部',
+        value: '',
+      },
+      {
+        key: '是',
+        value: true,
+      },
+      {
+        key: '否',
+        value: false,
+      }
+    ]
     },
     {
       label: '产品名称',
@@ -92,6 +110,7 @@ export default class LoanApprovalManage extends Component {
         value: '',
       }],
     },
+  
   ];
 
   table = [{
@@ -121,16 +140,16 @@ export default class LoanApprovalManage extends Component {
       key: 'phone',
       width: 130,
     },
-    {
-      title: '合作机构名称',
-      key: 'partnerName',
-      width: 240,
-    },
-    {
-      title: '项目名称',
-      key: 'projectName',
-      width: 160,
-    },
+    // {
+    //   title: '合作机构名称',
+    //   key: 'partnerName',
+    //   width: 240,
+    // },
+    // {
+    //   title: '项目名称',
+    //   key: 'projectName',
+    //   width: 160,
+    // },
     {
       title: '产品名称',
       key: 'productName',
@@ -143,8 +162,35 @@ export default class LoanApprovalManage extends Component {
       align: 'right',
     },
     {
+      title: '分期期限',
+      key: 'loanTerm',
+      width: 110,
+      align: 'right',
+    },
+    {
+      title: '集团内部员工',
+      key: 'isInternalEmployeeText',
+      width: 110,
+      align: 'right',
+    },
+    {
       title: '申请时间',
       key: 'applyTime',
+      width: 140,
+    },
+    {
+      title: '未还本金合计',
+      key: 'unpaidPrincipal',
+      width: 140,
+    },
+    {
+      title: '提现总额度',
+      key: 'cashTotalLimit',
+      width: 140,
+    },
+    {
+      title: '嗨贷总额度',
+      key: 'hiTotalLimit',
       width: 140,
     },
     {

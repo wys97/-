@@ -15,7 +15,10 @@ export async function overdueDetailList({
   overdueAmountEnd,
   overdueTotalAmountBegin,
   overdueTotalAmountEnd,
+  isInternalEmployee,
   isClear,
+  isHsLoanDue,
+  productName,
   page,
   limit
 }) {
@@ -30,7 +33,10 @@ export async function overdueDetailList({
     overdueAmountEnd,
     overdueTotalAmountBegin,
     overdueTotalAmountEnd,
+    isInternalEmployee,
     isClear,
+    isHsLoanDue,
+    productName,
     page,
     limit
   };
@@ -50,6 +56,16 @@ export async function commonYesOrNo() {
     method: "post"
   });
 }
+/**
+ * 产品名称下拉
+ */
+export async function productName() {
+  return axiosService({
+    url: "/admin-api-hnair/overdue-detail/product-select-list",
+    method: "post"
+  });
+}
+
 /**
  * 获取 逾期总金额 ，本金 ，利息
  */
@@ -81,9 +97,11 @@ export async function exportExcel({
   overdueDayEnd,
   overdueAmountBegin,
   overdueAmountEnd,
+  isInternalEmployee,
   overdueTotalAmountBegin,
   overdueTotalAmountEnd,
   isClearText,
+  isHsLoanDue,
   isClear,
   page,
   limit
@@ -107,10 +125,12 @@ export async function exportExcel({
     overdueDayEnd: overdueDayEnd ? overdueDayEnd : "",
     overdueAmountBegin: overdueAmountBegin ? overdueAmountBegin : "",
     overdueAmountEnd: overdueAmountEnd ? overdueAmountEnd : "",
+    isInternalEmployee,
     overdueTotalAmountBegin: overdueTotalAmountBegin ? overdueTotalAmountBegin : "",
     overdueTotalAmountEnd: overdueTotalAmountEnd ? overdueTotalAmountEnd : "",
     isClearText: isClearText ? isClearText : "",
     isClear: isClear ? isClear : "",
+    isHsLoanDue,
     page,
     limit
   };
@@ -125,6 +145,7 @@ export async function exportExcel({
 export default {
   overdueDetailList,
   commonYesOrNo,
+  productName,
   exportExcel,
   statisticsMoney
 };

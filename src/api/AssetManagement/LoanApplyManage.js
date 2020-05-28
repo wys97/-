@@ -202,6 +202,19 @@ export async function exportExcel({
   });
 }
 
+
+
+// 重新发起风控
+export async function toRequest(data){
+  return axiosService({
+    url:'/admin-api/loan-apply/resubmit-risk',
+    method:'post',
+    data
+  })
+}
+
+
+
 export default {
   applyStatus,
   tradeType,
@@ -216,7 +229,8 @@ export default {
   creditHistory,
   loanApplyRecord,
   exportExcel,
-  contract
+  contract,
+  toRequest
 }
 
 Date.prototype.Format = function (fmt) {

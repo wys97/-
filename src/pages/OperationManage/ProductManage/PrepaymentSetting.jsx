@@ -111,6 +111,18 @@ export default class PrepaymentSetting extends Component {
               <Row>
                 <Col span="24">
                   <FormItem
+                    labelTextAlign="right"
+                    style={styles.formItem}
+                    label="提还利息配置:"
+                    required
+                  >
+                    <p>{this.state.formInput.prepayInterestMethodText}</p>
+                  </FormItem>
+                </Col>
+              </Row>
+              <Row>
+                <Col span="24">
+                  <FormItem
                     label="是否收取提还违约金:"
                     required
                     style={styles.formItem}
@@ -143,7 +155,7 @@ export default class PrepaymentSetting extends Component {
                 <Col span="24">
                   <FormItem
                     labelTextAlign="right"
-                    style={{whiteSpace: "nowrap",display: "flex"}}
+                    style={{ whiteSpace: "nowrap", display: "flex" }}
                     label="提还违约金倍数配置:"
                     required
                   >
@@ -154,7 +166,7 @@ export default class PrepaymentSetting extends Component {
                       lineBtnFn={this.lineBtnFn}
                       loadTable={this.state.loading}
                       data={this.state.data}
-                      style = {{width: "90%"}}
+                      style={{ width: "90%" }}
                     />
                   </FormItem>
                 </Col>

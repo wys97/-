@@ -97,7 +97,7 @@ export default class DrawBack extends Component {
       name: "导出",
       type: "export",
       icon: "export",
-      permission: "finance:day-settle:day-settle:export"
+      permission: "loanbusiness:refund:refund:menu"
     }
   ];
 
