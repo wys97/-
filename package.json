@@ -23,7 +23,7 @@
     "hoist-non-react-statics": "^3.3.0",
     "invariant": "^2.2.4",
     "lodash": "^4.17.10",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "node-sass": "^4.13.0",
     "path-to-regexp": "^2.4.0",
     "react": "^16.8.6",
